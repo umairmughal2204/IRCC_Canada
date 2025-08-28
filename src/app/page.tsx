@@ -47,7 +47,7 @@ export default function Home() {
       {/* Hero */}
       <section className="relative h-[300px] md:h-[400px] overflow-hidden">
         <Image
-          src="/images/hero.jpg"
+          src="/banner.jpg"
           alt="Hero"
           layout="fill"
           objectFit="cover"
@@ -332,7 +332,7 @@ export default function Home() {
             </a>
           </div>
           <Image
-            src="/images/canada-wordmark.png"
+            src="/footer.svg"
             alt="Canada Logo"
             width={120}
             height={40}
