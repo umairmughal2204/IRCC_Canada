@@ -3,74 +3,64 @@ import Image from "next/image";
 export default function Home() {
   return (
     <main className="min-h-screen bg-white text-black font-sans flex flex-col">
-      {/* Header */}
-      <header className="bg-white border-b">
-        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-          {/* Logo */}
-          <div className="flex items-center gap-4">
-            <Image
-              src="/images/canada-flag.png"
-              alt="Canada Flag"
-              width={50}
-              height={30}
-            />
-            <div>
-              <p className="text-sm font-semibold">Government of Canada</p>
-              <p className="text-sm text-gray-600">Gouvernement du Canada</p>
-            </div>
-          </div>
+      {/* ===== Header ===== */}
+      <header className="border-b border-gray-300">
+        {/* Canada.ca wordmark + Lang switch */}
+        <div className="flex justify-between items-center px-6 py-3">
+          <img
+            src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/sig-blk-en.svg"
+            alt="Government of Canada"
+            className="h-10"
+          />
+          <a href="#" className="text-sm text-blue-700 hover:underline">
+            Français
+          </a>
+        </div>
 
-          {/* Right side */}
-          <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-            <a href="#" className="text-sm underline text-blue-700">
-              Français
+        {/* Dark Menu Bar */}
+        <div className="bg-[#26374a] px-6 py-2">
+          <button className="text-white text-sm font-medium">MENU ▼</button>
+        </div>
+
+        {/* Breadcrumb */}
+        <nav className="bg-gray-50 border-t border-gray-200">
+          <div className="max-w-6xl mx-auto text-xs text-gray-700 px-4 sm:px-8 py-3 flex flex-wrap space-x-1">
+            <a href="#" className="text-blue-700 hover:underline">
+              Canada.ca
             </a>
-            <div className="flex border rounded overflow-hidden w-full max-w-xs">
-              <input
-                type="text"
-                placeholder="Search IRCC"
-                className="flex-1 px-2 py-1 text-sm outline-none"
-              />
-              <button className="bg-gray-800 px-3 flex items-center justify-center">
-                <Image
-                  src="/icons/search.svg"
-                  alt="Search"
-                  width={18}
-                  height={18}
-                />
-              </button>
-            </div>
+            <span>›</span>
+            <a href="#" className="text-blue-700 hover:underline">
+              Immigration and citizenship
+            </a>
+            <span>›</span>
+            <a href="#" className="text-blue-700 hover:underline">
+              IRCC applications
+            </a>
           </div>
+        </nav>
+
+        {/* Signed In Banner */}
+        <div className="text-right text-sm px-6 py-2 bg-gray-100 border-t">
+          Signed in as <span className="font-semibold">AZEEM LIAQAT</span>
+          <a href="#" className="ml-2 text-blue-700 hover:underline">
+            Account home
+          </a>{" "}
+          |{" "}
+          <a href="#" className="text-blue-700 hover:underline">
+            Account profile
+          </a>{" "}
+          |{" "}
+          <a href="#" className="text-blue-700 hover:underline">
+            Help
+          </a>{" "}
+          |{" "}
+          <a href="#" className="text-blue-700 hover:underline">
+            Logout
+          </a>
         </div>
       </header>
 
-      {/* Menu Bar */}
-      <div className="bg-gray-100 border-b">
-        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-3 flex justify-between items-center">
-          <button className="bg-[#1a2d41] text-white text-sm px-4 py-2 rounded">
-            MENU ▼
-          </button>
-        </div>
-      </div>
-
-      {/* Breadcrumb */}
-      <nav className="bg-white border-b">
-        <div className="max-w-6xl mx-auto text-xs text-blue-700 px-4 sm:px-8 py-3 space-x-1 flex flex-wrap">
-          <a href="#" className="hover:underline">
-            Canada.ca
-          </a>
-          <span>›</span>
-          <a href="#" className="hover:underline">
-            Immigration and citizenship
-          </a>
-          <span>›</span>
-          <a href="#" className="hover:underline">
-            IRCC applications
-          </a>
-        </div>
-      </nav>
-
-      {/* Content Section */}
+      {/* ===== Content Section ===== */}
       <section className="max-w-6xl mx-auto px-4 sm:px-8 py-8 w-full">
         <h1 className="text-2xl font-bold mb-2">Sign in</h1>
         <h2 className="text-3xl font-semibold border-b-2 border-red-700 inline-block mb-4">
@@ -151,7 +141,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Help with your account */}
+      {/* ===== Help with your account ===== */}
       <section className="max-w-6xl mx-auto px-4 sm:px-8 py-12 w-full">
         <h2 className="text-2xl font-bold mb-6">Help with your account</h2>
 
@@ -208,7 +198,7 @@ export default function Home() {
         <p className="text-sm text-gray-500">Date modified: 2025-07-14</p>
       </section>
 
-      {/* Footer */}
+      {/* ===== Footer ===== */}
       <footer className="bg-[#26374a] text-white mt-auto">
         {/* Top links */}
         <div className="border-b border-[#1b2a38]">
