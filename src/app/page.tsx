@@ -2,102 +2,343 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+    <main className="min-h-screen bg-white text-black font-sans flex flex-col">
+      {/* Header */}
+      <header className="bg-white border-b px-4 sm:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="flex items-center gap-4">
+          <Image
+            src="/image.svg"
+            alt="Canada Flag"
+            width={300}
+            height={200}
+          />
+
+        </div>
+        <div className="flex items-center gap-4">
+          <a href="#" className="text-sm underline text-blue-700">
+            Français
+          </a>
+          <div className="flex border rounded overflow-hidden">
+            <input
+              type="text"
+              placeholder="Search Canada.ca"
+              className="px-2 py-1 text-sm outline-none"
+            />
+            <button className="bg-gray-800 px-3">
+              <Image
+                src="/icons/search.svg"
+                alt="Search"
+                width={20}
+                height={20}
+              />
+            </button>
+          </div>
+          <button className="bg-gray-800 text-white px-4 py-1 text-sm">
+            Sign in
+          </button>
+        </div>
+      </header>
+
+      {/* Menu bar */}
+      <div className="border-b px-4 sm:px-8 py-3">
+        <button className="text-sm font-semibold text-gray-800">MENU ▼</button>
+      </div>
+
+      {/* Hero */}
+      <section className="relative h-[300px] md:h-[400px] overflow-hidden">
         <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
+          src="/images/hero.jpg"
+          alt="Hero"
+          layout="fill"
+          objectFit="cover"
+          objectPosition="center"
           priority
         />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+        <div className="absolute left-6 bottom-6 bg-gray-900/80 p-6 max-w-lg text-white">
+          <h1 className="text-3xl font-semibold mb-2">Canada.ca</h1>
+          <div className="h-1 w-16 bg-red-600 mb-3"></div>
+          <p className="text-sm">
+            The official website of the Government of Canada
+          </p>
+        </div>
+      </section>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
+      {/* Most Requested */}
+      <section className="bg-gray-50 py-8 px-6 sm:px-12">
+        <h2 className="text-xl font-semibold mb-4">Most requested</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 text-sm">
+          <a href="#" className="text-blue-700 underline hover:text-blue-900">
+            Sign in to an account
           </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
+          <a href="#" className="text-blue-700 underline hover:text-blue-900">
+            Employment Insurance and leave
+          </a>
+          <a href="#" className="text-blue-700 underline hover:text-blue-900">
+            Public pensions (CPP and OAS)
+          </a>
+          <a href="#" className="text-blue-700 underline hover:text-blue-900">
+            Get a passport
+          </a>
+          <a href="#" className="text-blue-700 underline hover:text-blue-900">
+            Jobs
+          </a>
+          <a href="#" className="text-blue-700 underline hover:text-blue-900">
+            Visit Canada
+          </a>
+          <a href="#" className="text-blue-700 underline hover:text-blue-900">
+            Disability Benefit
+          </a>
+          <a href="#" className="text-blue-700 underline hover:text-blue-900">
+            Canadian Dental Care Plan
           </a>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+      </section>
+
+      {/* Popular Services Section */}
+      <section className="bg-white border-t px-6 sm:px-12 py-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-y-6 md:gap-x-8 text-sm">
+          {[
+            {
+              title: "Jobs",
+              desc: "Find a job, training, hiring programs, work permits, Social Insurance Number (SIN)",
+            },
+            {
+              title: "Immigration and citizenship",
+              desc: "Visit, work, study, immigrate, refugees, permanent residents, apply, check status",
+            },
+            {
+              title: "Travel and tourism",
+              desc: "In Canada or abroad, advice, advisories, passports, visit Canada, events, attractions",
+            },
+            {
+              title: "Business and industry",
+              desc: "Starting a business, permits, copyright, business support, selling to government",
+            },
+            {
+              title: "Benefits",
+              desc: "EI, family and sickness leave, pensions, housing, student aid, disabilities",
+            },
+            {
+              title: "Taxes",
+              desc: "Income tax, payroll, GST/HST, contribution limits, tax credits, charities",
+            },
+            {
+              title: "Health",
+              desc: "Food, nutrition, diseases, vaccines, drugs, product safety and recalls",
+            },
+            {
+              title: "Environment and natural resources",
+              desc: "Weather, climate, agriculture, wildlife, pollution, conservation, fisheries",
+            },
+            {
+              title: "Money and finances",
+              desc: "Personal finance, credit reports, fraud protection, paying for education",
+            },
+          ].map((item, idx) => (
+            <div key={idx}>
+              <a
+                href="#"
+                className="font-semibold text-blue-700 hover:text-blue-900 block mb-1"
+              >
+                {item.title}
+              </a>
+              <p className="text-gray-700">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6">
+          <button className="border border-black px-4 py-2 text-sm hover:bg-gray-100">
+            All services
+          </button>
+        </div>
+      </section>
+
+      {/* Your Government Section */}
+      <section className="bg-gray-50 border-t px-6 sm:px-12 py-10">
+        <h2 className="text-xl font-semibold mb-6">Your government</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            {[
+              "All contacts",
+              "Prime Minister",
+              "About government",
+              "Working for the government",
+              "News",
+              "Departments and agencies",
+              "Open government and data",
+              "Treaties, laws and regulations",
+            ].map((link, idx) => (
+              <a
+                key={idx}
+                href="#"
+                className="text-blue-700 underline hover:text-blue-900 transition"
+              >
+                {link}
+              </a>
+            ))}
+          </div>
+
+          <div className="md:col-span-1 hidden md:block">
+            <Image
+              src="/images/building.jpg"
+              alt="Government Building"
+              width={400}
+              height={300}
+              className="rounded object-cover"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="bg-white border-t px-6 sm:px-12 py-10">
+        <h2 className="text-xl font-semibold mb-6">Features</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[
+            {
+              title: "Canadian Dental Care Plan",
+              desc: "Are you eligible? Applications now open to all eligible Canadians.",
+              img: "/images/dental.jpg",
+              link: "#",
+            },
+            {
+              title: "Canada’s response to U.S. tariffs",
+              desc: "A comprehensive plan to protect and defend Canada’s interests.",
+              img: "/images/tariffs.jpg",
+              link: "#",
+            },
+            {
+              title: "Canada Strong Pass",
+              desc: "Enjoy free or discounted admissions as you make Canada your travel destination.",
+              img: "/images/strong-pass.jpg",
+              link: "#",
+            },
+            {
+              title: "Canada and Ukraine",
+              desc: "Learn about Canada’s response to the Russian invasion of Ukraine.",
+              img: "/images/ukraine.jpg",
+              link: "#",
+            },
+          ].map((item, idx) => (
+            <div key={idx} className="bg-gray-50 shadow rounded overflow-hidden">
+              <Image
+                src={item.img}
+                alt={item.title}
+                width={600}
+                height={300}
+                className="object-cover w-full h-48"
+              />
+              <div className="p-4">
+                <a
+                  href={item.link}
+                  className="font-semibold text-blue-700 hover:text-blue-900 block mb-1"
+                >
+                  {item.title}
+                </a>
+                <p className="text-gray-700 text-sm">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-[#1a2d41] text-white mt-auto">
+        <div className="px-6 sm:px-12 py-10">
+          <p className="text-sm text-gray-300 mb-6">
+            Date modified: 2025-08-27
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+            <div>
+              <h3 className="font-semibold mb-3">Government of Canada</h3>
+              <ul className="space-y-2">
+                {[
+                  "All contacts",
+                  "Jobs",
+                  "Immigration and citizenship",
+                  "Travel and tourism",
+                  "Business",
+                  "Benefits",
+                  "Health",
+                  "Taxes",
+                ].map((link, idx) => (
+                  <li key={idx}>
+                    <a href="#" className="hover:underline">
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <ul className="space-y-2 mt-8 md:mt-0">
+                {[
+                  "Departments and agencies",
+                  "Environment and natural resources",
+                  "National security and defence",
+                  "Culture, history and sport",
+                  "Policing, justice and emergencies",
+                  "Transport and infrastructure",
+                  "Canada and the world",
+                  "Money and finances",
+                ].map((link, idx) => (
+                  <li key={idx}>
+                    <a href="#" className="hover:underline">
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <ul className="space-y-2 mt-8 md:mt-0">
+                {[
+                  "About government",
+                  "Science and innovation",
+                  "Indigenous Peoples",
+                  "Veterans and military",
+                  "Youth",
+                  "Manage life events",
+                ].map((link, idx) => (
+                  <li key={idx}>
+                    <a href="#" className="hover:underline">
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="bg-[#13202e] px-6 sm:px-12 py-4 text-xs text-gray-300 flex flex-col md:flex-row justify-between items-center gap-2">
+          <div className="space-x-4">
+            <a href="#" className="hover:underline">
+              Social media
+            </a>
+            <a href="#" className="hover:underline">
+              Mobile applications
+            </a>
+            <a href="#" className="hover:underline">
+              About Canada.ca
+            </a>
+            <a href="#" className="hover:underline">
+              Terms and conditions
+            </a>
+            <a href="#" className="hover:underline">
+              Privacy
+            </a>
+          </div>
           <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+            src="/images/canada-wordmark.png"
+            alt="Canada Logo"
+            width={120}
+            height={40}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+        </div>
       </footer>
-    </div>
+    </main>
   );
 }
