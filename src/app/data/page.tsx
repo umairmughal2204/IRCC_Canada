@@ -374,7 +374,7 @@ export default function AccountPage() {
           {/* Canada logo */}
           <div className="mt-6 flex justify-center">
             <Image
-              src="/images/canada-logo.png"
+              src="/footer.svg"
               alt="Canada Logo"
               width={150}
               height={40}

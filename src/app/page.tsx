@@ -1,64 +1,11 @@
 import Image from "next/image";
+import Header from "./header";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-white text-black font-sans flex flex-col">
       {/* ===== Header ===== */}
-      <header className="border-b border-gray-300">
-        {/* Canada.ca wordmark + Lang switch */}
-        <div className="flex justify-between items-center px-6 py-3">
-          <img
-            src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/sig-blk-en.svg"
-            alt="Government of Canada"
-            className="h-10"
-          />
-          <a href="#" className="text-sm text-blue-700 hover:underline">
-            Français
-          </a>
-        </div>
-
-        {/* Dark Menu Bar */}
-        <div className="bg-[#26374a] px-6 py-2">
-          <button className="text-white text-sm font-medium">MENU ▼</button>
-        </div>
-
-        {/* Breadcrumb */}
-        <nav className="bg-gray-50 border-t border-gray-200">
-          <div className="max-w-6xl mx-auto text-xs text-gray-700 px-4 sm:px-8 py-3 flex flex-wrap space-x-1">
-            <a href="#" className="text-blue-700 hover:underline">
-              Canada.ca
-            </a>
-            <span>›</span>
-            <a href="#" className="text-blue-700 hover:underline">
-              Immigration and citizenship
-            </a>
-            <span>›</span>
-            <a href="#" className="text-blue-700 hover:underline">
-              IRCC applications
-            </a>
-          </div>
-        </nav>
-
-        {/* Signed In Banner */}
-        <div className="text-right text-sm px-6 py-2 bg-gray-100 border-t">
-          Signed in as <span className="font-semibold">AZEEM LIAQAT</span>
-          <a href="#" className="ml-2 text-blue-700 hover:underline">
-            Account home
-          </a>{" "}
-          |{" "}
-          <a href="#" className="text-blue-700 hover:underline">
-            Account profile
-          </a>{" "}
-          |{" "}
-          <a href="#" className="text-blue-700 hover:underline">
-            Help
-          </a>{" "}
-          |{" "}
-          <a href="#" className="text-blue-700 hover:underline">
-            Logout
-          </a>
-        </div>
-      </header>
+      <Header/>
 
       {/* ===== Content Section ===== */}
       <section className="max-w-6xl mx-auto px-4 sm:px-8 py-8 w-full">
@@ -275,7 +222,7 @@ export default function Home() {
             </div>
             <div className="flex items-center">
               <Image
-                src="/canada-wordmark.png"
+                src="/footer.svg"
                 alt="Canada wordmark"
                 width={160}
                 height={40}
