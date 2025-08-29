@@ -7,34 +7,31 @@ export default function ApplicationLoadingSkeleton() {
         <div className="h-8 w-28 bg-gray-300 rounded dark:bg-gray-600"></div>
       </div>
 
-      {/* Personal Info fields */}
-      {[...Array(5)].map((_, i) => (
+      {/* Single-line fields */}
+      {[
+        "User Name",
+        "Password",
+        "Application Type",
+        "Application Number",
+        "Applicant Name",
+        "Date of Submission",
+        "Status",
+        "UCI",
+        "Biometrics Number",
+        "Biometrics Enrolment Date",
+        "Biometrics Expiry Date",
+        "Biometrics Status",
+      ].map((_, i) => (
         <div key={i} className="space-y-2">
           <div className="h-4 w-40 bg-gray-300 rounded dark:bg-gray-600"></div>
           <div className="h-10 bg-gray-300 rounded dark:bg-gray-600"></div>
         </div>
       ))}
 
-      {/* Larger textarea for address/notes */}
+      {/* Messages textarea */}
       <div className="space-y-2">
         <div className="h-4 w-40 bg-gray-300 rounded dark:bg-gray-600"></div>
         <div className="h-20 bg-gray-300 rounded dark:bg-gray-600"></div>
-      </div>
-
-      {/* Grid for 2-column fields (e.g., phone + email, or start/end dates) */}
-      <div className="grid md:grid-cols-2 gap-4">
-        {[...Array(4)].map((_, i) => (
-          <div key={i} className="space-y-2">
-            <div className="h-4 w-32 bg-gray-300 rounded dark:bg-gray-600"></div>
-            <div className="h-10 bg-gray-300 rounded dark:bg-gray-600"></div>
-          </div>
-        ))}
-      </div>
-
-      {/* Another textarea for description/statement */}
-      <div className="space-y-2">
-        <div className="h-4 w-40 bg-gray-300 rounded dark:bg-gray-600"></div>
-        <div className="h-28 bg-gray-300 rounded dark:bg-gray-600"></div>
       </div>
 
       {/* Submit button */}

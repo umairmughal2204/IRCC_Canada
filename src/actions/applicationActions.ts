@@ -39,7 +39,7 @@ export type ApplicationFormState = {
   data?: any;
 };
 
-// ✅ Helper: Parse FormData
+// ✅ Helper: Parse FormData (aligned with your form field names)
 function parseApplicationFormData(formData: FormData): Record<string, any> {
   return {
     userName: formData.get("userName") || "",
@@ -49,12 +49,12 @@ function parseApplicationFormData(formData: FormData): Record<string, any> {
     applicantName: formData.get("applicantName") || "",
     dateOfSubmission: formData.get("dateOfSubmission") || "",
     status: formData.get("status") || "",
-    uniqueClientIdentifier: formData.get("uniqueClientIdentifier") || "",
+    uniqueClientIdentifier: formData.get("uci") || "",
     biometrics: {
       number: formData.get("biometricsNumber") || "",
-      enrolmentDate: formData.get("biometricsEnrolmentDate") || "",
-      expiryDate: formData.get("biometricsExpiryDate") || "",
-      status: formData.get("biometricsStatus") || "",
+      enrolmentDate: formData.get("dateOfBiometrics") || "",
+      expiryDate: formData.get("expiryDate") || "",
+      status: formData.get("biometricStatus") || "",
     },
   };
 }
