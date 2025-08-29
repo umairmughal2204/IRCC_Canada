@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-
+import { FaSearch } from  "react-icons/fa";
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<string | null>("Taxes");
@@ -77,7 +77,7 @@ export default function Header() {
             />
             <button className="bg-[#26374a] text-white px-3 flex items-center justify-center">
               <span className="sr-only">Search</span>
-              🔍
+              <FaSearch/>
             </button>
           </div>
 
