@@ -84,7 +84,7 @@ export default function AuthSuccessPage() {
         {/* Continue button */}
         <div className="mt-8">
           <a
-            href="/dashboard"
+            href="/terms"
             className="bg-[#335075] text-white px-6 py-2 rounded hover:bg-[#2a3d5a]"
           >
             Continue

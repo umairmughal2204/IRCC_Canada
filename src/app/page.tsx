@@ -1,7 +1,16 @@
+"use client";  // ✅ Add this at the top
+
 import Image from "next/image";
 import Header from "./header";
+import { useRouter } from "next/navigation"; // Change to next/navigation
+import { FaKey, FaUniversity, FaUserPlus } from "react-icons/fa";
 
 export default function Home() {
+  const router = useRouter();
+  const handleClick = () => {
+    router.push("/signin"); // redirect to /signin
+  };
+  
   return (
     <main className="min-h-screen bg-white text-black font-sans flex flex-col">
       {/* ===== Header ===== */}
@@ -42,25 +51,22 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Sign in / Create account */}
         <div className="border rounded shadow-sm overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x">
             {/* Sign in */}
             <div className="p-6 flex flex-col space-y-4">
               <h3 className="text-lg font-semibold">Sign in</h3>
 
-              <button className="w-full bg-[#1a2d41] hover:bg-[#0f1b29] text-white font-medium px-4 py-3 rounded flex items-center gap-2 justify-center">
-                <Image src="/icons/key.svg" alt="Key" width={20} height={20} />
+              <button 
+                onClick={handleClick}
+                className="w-full bg-[#1a2d41] hover:bg-[#0f1b29] text-white font-medium px-4 py-3 rounded flex items-center gap-2 justify-center"
+              >
+                <FaKey />
                 GCKey username and password
               </button>
 
               <button className="w-full bg-[#1a2d41] hover:bg-[#0f1b29] text-white font-medium px-4 py-3 rounded flex items-center gap-2 justify-center">
-                <Image
-                  src="/icons/bank.svg"
-                  alt="Bank"
-                  width={20}
-                  height={20}
-                />
+                <FaUniversity />
                 <span>
                   Canadian <i>Interac</i>® Sign-In Partner
                 </span>
@@ -75,12 +81,7 @@ export default function Home() {
             <div className="p-6 flex flex-col items-center justify-center">
               <h3 className="text-lg font-semibold mb-4">Create an account</h3>
               <button className="w-full md:w-auto border px-6 py-3 rounded bg-gray-50 hover:bg-gray-100 font-medium text-blue-700 flex items-center gap-2 justify-center">
-                <Image
-                  src="/icons/user-plus.svg"
-                  alt="Register"
-                  width={20}
-                  height={20}
-                />
+                <FaUserPlus />
                 Register for an account
               </button>
             </div>

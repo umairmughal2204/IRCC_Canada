@@ -16,7 +16,7 @@ export default function IdentityVerificationPage() {
       return;
     }
     // ✅ After success, go to auth success
-    router.push("/auth-success");
+    router.push("/data");
   };
 
   const handleLogout = () => {

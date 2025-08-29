@@ -1,4 +1,12 @@
+"use client"; // Ensure this component is a client component
+import { useRouter } from "next/navigation";
+
 export default function DashboardPage() {
+     const router = useRouter();
+
+  const handleClick = () => {
+    router.push("/twofactor"); // redirect to /twpfactor
+  };
     return (
         <div className="min-h-screen flex flex-col bg-white">
             {/* Header */}
@@ -83,7 +91,9 @@ export default function DashboardPage() {
                         </p>
 
                         <div className="text-center md:text-left">
-                            <button className="bg-[#2f4b72] text-white px-8 py-2 rounded hover:bg-[#1f3555]">
+                            <button 
+                            onClick={handleClick}
+                            className="bg-[#2f4b72] text-white px-8 py-2 rounded hover:bg-[#1f3555]">
                                 Continue
                             </button>
                         </div>

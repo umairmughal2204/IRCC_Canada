@@ -9,7 +9,7 @@ export default function TermsPage() {
   const handleAccept = (e: React.FormEvent) => {
     e.preventDefault();
     alert("Thank you for accepting the Terms and Conditions. Redirecting...");
-    router.push("/account"); // change route as needed
+    router.push("/identity"); // change route as needed
   };
 
   const handleDecline = () => {
@@ -165,6 +165,7 @@ export default function TermsPage() {
             className="mt-6 flex flex-wrap justify-start gap-4"
           >
             <button
+            
               type="submit"
               className="bg-[#284162] text-white px-6 py-2 rounded hover:bg-[#1e3250]"
             >

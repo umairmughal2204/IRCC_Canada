@@ -1,7 +1,15 @@
 // app/twofactor/page.tsx
+"use client"; // Ensure this component is a client component
+import { useRouter } from "next/navigation";
+
 import Image from "next/image";
 
 export default function TwoFactorPage() {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push("/auth-success"); // redirect to /twpfactor
+  };
   return (
     <main className="min-h-screen bg-white text-gray-900">
       {/* Header */}
@@ -40,28 +48,28 @@ export default function TwoFactorPage() {
         </div>
 
         {/* Navigation Bar */}
-<nav className="w-full bg-[#E1E4E7] text-sm border-t border-b border-white/20">
-  <div className="flex justify-start gap-8 px-6">
-    <a
-      href="#"
-      className="py-3 hover:underline text-[16px] text-[#2f4b72]"
-    >
-      Contact Us
-    </a>
-    <a
-      href="#"
-      className="py-3 hover:underline text-[16px] text-[#2f4b72]"
-    >
-      FAQ
-    </a>
-    <a
-      href="#"
-      className="py-3 hover:underline text-[16px] text-[#2f4b72]"
-    >
-      Help
-    </a>
-  </div>
-</nav>
+        <nav className="w-full bg-[#E1E4E7] text-sm border-t border-b border-white/20">
+          <div className="flex justify-start gap-8 px-6">
+            <a
+              href="#"
+              className="py-3 hover:underline text-[16px] text-[#2f4b72]"
+            >
+              Contact Us
+            </a>
+            <a
+              href="#"
+              className="py-3 hover:underline text-[16px] text-[#2f4b72]"
+            >
+              FAQ
+            </a>
+            <a
+              href="#"
+              className="py-3 hover:underline text-[16px] text-[#2f4b72]"
+            >
+              Help
+            </a>
+          </div>
+        </nav>
 
 
       </header>
@@ -131,6 +139,10 @@ export default function TwoFactorPage() {
 
           <div className="flex gap-4">
             <button
+              onClick={(e) => {
+                e.preventDefault(); // Prevent form submission
+                handleClick();      // Redirect to /dashboard
+              }}
               type="submit"
               className="bg-[#BC3331] text-white px-6 py-2 rounded hover:bg-[#A82C2A]"
             >
@@ -199,6 +211,6 @@ export default function TwoFactorPage() {
         </div>
       </footer>
     </main>
-    
+
   );
 }

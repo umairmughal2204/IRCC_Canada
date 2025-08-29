@@ -134,7 +134,7 @@ export default function AccountPage() {
                 <td className="px-3 py-2">Submitted</td>
                 <td className="px-3 py-2">New</td>
                 <td className="px-3 py-2">
-                  <a href="#" className="text-blue-700 underline">
+                  <a href="/profile" className="text-blue-700 underline">
                     Check full application status
                   </a>
                 </td>

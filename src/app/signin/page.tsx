@@ -1,5 +1,14 @@
+"use client";
+import { useRouter } from "next/navigation";
+
 export default function SignInPage() {
+    const router = useRouter();
+
+    const handleClick = () => {
+        router.push("/dashboard"); // redirect to /dashboard
+    };
     return (
+
         <div className="min-h-screen flex flex-col bg-white">
             {/* Header */}
             {/* Header */}
@@ -102,10 +111,15 @@ export default function SignInPage() {
                             <div className="flex space-x-4 mt-4">
                                 <button
                                     type="submit"
+                                    onClick={(e) => {
+                                        e.preventDefault(); // Prevent form submission
+                                        handleClick();      // Redirect to /dashboard
+                                    }}
                                     className="bg-[#2f4b72] text-white px-6 py-2 rounded hover:bg-[#1f3555]"
                                 >
                                     Sign In
                                 </button>
+
                                 <button
                                     type="reset"
                                     className="bg-gray-300 text-gray-800 px-6 py-2 rounded hover:bg-gray-400"
@@ -206,10 +220,10 @@ export default function SignInPage() {
                 {/* Canada Wordmark Footer */}
                 <div className="bg-white py-6 px-8 flex justify-end w-full">
                     <img
-            src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_43/wet-boew/assets/wmms-blk.svg"
-            alt="Canada logo"
-            className="h-8"
-          />
+                        src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_43/wet-boew/assets/wmms-blk.svg"
+                        alt="Canada logo"
+                        className="h-8"
+                    />
                 </div>
             </footer>
         </div>
