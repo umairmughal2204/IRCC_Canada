@@ -4,6 +4,7 @@ import React, { use, useState, useEffect } from "react";
 import Image from "next/image";
 import { fetchApplicationByIdAction } from "@/actions/applicationActions";
 import Header from "@/app/header";
+import { logoutApplicationAction } from "@/actions/authActions";
 
 export default function AccountPage({
   params,
@@ -43,16 +44,23 @@ export default function AccountPage({
   // Dynamic last modified date
   const lastModified = application?.lastModified
     ? new Date(application.lastModified).toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    })
     : new Date().toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      });
-
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  const handleLogout = async () => {
+    try {
+      await logoutApplicationAction(); // Call server action
+      window.location.href = "/signin"; // Redirect to login page
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
   return (
     <div className="bg-white text-black font-sans min-h-screen">
       {/* Header */}
@@ -84,9 +92,12 @@ export default function AccountPage({
           Help
         </a>{" "}
         |{" "}
-        <a href="#" className="text-blue-700 hover:underline">
+        <button
+          onClick={handleLogout}
+          className="text-blue-700 hover:underline"
+        >
           Logout
-        </a>
+        </button>
       </div>
 
       {/* Main content */}

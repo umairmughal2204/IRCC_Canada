@@ -3,6 +3,7 @@ import React, { useState, useEffect, use } from "react";
 import Image from "next/image";
 import { fetchApplicationByIdAction } from "@/actions/applicationActions";
 import Header from "@/app/header";
+import { logoutApplicationAction } from "@/actions/authActions";
 
 export default function Home({
   params,
@@ -41,6 +42,14 @@ export default function Home({
         day: "numeric",
         year: "numeric",
       });
+      const handleLogout = async () => {
+          try {
+            await logoutApplicationAction(); // Call server action
+            window.location.href = "/signin"; // Redirect to login page
+          } catch (err) {
+            console.error("Logout failed", err);
+          }
+        };
 
   return (
     <div className="bg-white text-black font-sans min-h-screen">
@@ -73,9 +82,12 @@ export default function Home({
           Help
         </a>{" "}
         |{" "}
-        <a href="#" className="text-blue-700 hover:underline">
+        <button
+          onClick={handleLogout}
+          className="text-blue-700 hover:underline"
+        >
           Logout
-        </a>
+        </button>
       </div>
 
       {/* Application + Applicant info */}
