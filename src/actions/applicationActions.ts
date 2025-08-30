@@ -173,7 +173,6 @@ export async function fetchApplicationByIdAction(id: string) {
   await connectToDatabase();
   try {
     const application = await getApplicationById(id);
-    console.log("that is the application we fetch -> ",application)
     if (!application) return { error: { message: ["Application not found"] } };
     return { data: serializeMongoDoc(application) };
   } catch (error: any) {

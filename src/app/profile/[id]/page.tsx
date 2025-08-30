@@ -1,31 +1,30 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, use } from "react";
 import Image from "next/image";
+import { fetchApplicationByIdAction } from "@/actions/applicationActions";
 
-export default function Home() {
-  // Messages data
-  const messages = [
-    {
-      subject: "Biometrics Collection Letter",
-      dateSent: "June 27, 2025",
-      dateRead: "June 27, 2025",
-      link: "#",
-    },
-    {
-      subject: "Submission Confirmation",
-      dateSent: "June 25, 2025",
-      dateRead: "June 25, 2025",
-      link: "#",
-    },
-    {
-      subject: "Confirmation of Online Application Transmission",
-      dateSent: "June 25, 2025",
-      dateRead: "New Message",
-      link: "#",
-    },
-  ];
+export default function Home({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = use(params);
 
+  const [applicationData, setApplicationData] = useState<any>(null);
+  const [messages, setMessages] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+
+  // Fetch application by ID on mount
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetchApplicationByIdAction(id);
+      if (res.data) {
+        setApplicationData(res.data);
+        setMessages(res.data.messages || []);
+      }
+    }
+    fetchData();
+  }, [id]);
 
   const filtered = messages.filter((msg) =>
     msg.subject.toLowerCase().includes(search.toLowerCase())
@@ -60,7 +59,10 @@ export default function Home() {
 
       {/* Signed in */}
       <div className="text-right text-sm px-6">
-        Signed in as <span className="font-semibold">AZEEM LIAQAT</span>
+        Signed in as{" "}
+        <span className="font-semibold">
+          {applicationData?.applicantName || "Loading..."}
+        </span>
         <a href="#" className="ml-2 text-blue-700 hover:underline">
           Account home
         </a>{" "}
@@ -91,7 +93,17 @@ export default function Home() {
               when there is an update or if we need more information from you.
             </p>
             <p className="mt-3 font-semibold">
-              Latest update: <br /> Biometrics - June 30, 2025: Completed.
+              Latest update: <br />
+              Biometrics - {applicationData?.biometrics?.enrolmentDate
+                ? new Date(
+                    applicationData.biometrics.enrolmentDate
+                  ).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })
+                : "N/A"}{" "}
+              : {applicationData?.biometrics?.status || "Pending"}.
             </p>
           </div>
         </div>
@@ -103,29 +115,60 @@ export default function Home() {
           </h2>
           <div className="p-4 text-sm space-y-1">
             <p>
-              <strong>Principal Applicant:</strong> AZEEM LIAQAT
+              <strong>Principal Applicant:</strong>{" "}
+              {applicationData?.applicantName || "Loading..."}
             </p>
             <p>
-              <strong>Unique Client Identifier (UCI):</strong> 1149120000
+              <strong>Unique Client Identifier (UCI):</strong>{" "}
+              {applicationData?.uniqueClientIdentifier || "Loading..."}
             </p>
             <p>
-              <strong>Application number:</strong> W310094330
+              <strong>Application number:</strong>{" "}
+              {applicationData?.applicationNumber || "Loading..."}
             </p>
             <p>
-              <strong>Date Received:</strong> June 25, 2025
+              <strong>Date Received:</strong>{" "}
+              {applicationData?.dateOfSubmission
+                ? new Date(
+                    applicationData.dateOfSubmission
+                  ).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })
+                : "Loading..."}
             </p>
             <p>
               <strong>Biometrics:</strong>
             </p>
             <ul className="ml-4 list-disc">
               <li>
-                <strong>Biometrics Number:</strong> 00058020250630113926
+                <strong>Biometrics Number:</strong>{" "}
+                {applicationData?.biometrics?.number || "Loading..."}
               </li>
               <li>
-                <strong>Date of Biometrics Enrolment:</strong> June 30, 2025
+                <strong>Date of Biometrics Enrolment:</strong>{" "}
+                {applicationData?.biometrics?.enrolmentDate
+                  ? new Date(
+                      applicationData.biometrics.enrolmentDate
+                    ).toLocaleDateString("en-US", {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    })
+                  : "Loading..."}
               </li>
               <li>
-                <strong>Expiry Date:</strong> June 30, 2035
+                <strong>Expiry Date:</strong>{" "}
+                {applicationData?.biometrics?.expiryDate
+                  ? new Date(
+                      applicationData.biometrics.expiryDate
+                    ).toLocaleDateString("en-US", {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    })
+                  : "Loading..."}
               </li>
             </ul>
           </div>
@@ -169,7 +212,16 @@ export default function Home() {
           <li>
             <strong>🖐 Biometrics:</strong>
             <br />
-            June 30, 2025 Completed.
+            {applicationData?.biometrics?.enrolmentDate
+              ? new Date(
+                  applicationData.biometrics.enrolmentDate
+                ).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })
+              : "Pending"}{" "}
+            {applicationData?.biometrics?.status || ""}
           </li>
           <li>
             <strong>🔍 Background check:</strong>
@@ -186,7 +238,7 @@ export default function Home() {
         </ul>
       </div>
 
-      {/* Messages about application */}
+      {/* Messages about application (UPDATED) */}
       <div className="mt-10 px-6">
         <h2 className="text-xl font-semibold mb-2">
           Messages about your application
@@ -195,7 +247,9 @@ export default function Home() {
           ℹ️ Links and document titles are shown in the language you chose for
           your portal account when they were generated.
         </p>
-        <p className="mt-2 text-sm">(1 New message)</p>
+        <p className="mt-2 text-sm">
+          ({messages.length} New message{messages.length !== 1 ? "s" : ""})
+        </p>
 
         {/* Search + entries */}
         <div className="flex flex-wrap justify-between items-center mt-4 mb-2 text-sm">
@@ -230,18 +284,26 @@ export default function Home() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((msg, idx) => (
-                <tr
-                  key={idx}
-                  className="border-b border-gray-200 hover:bg-gray-50"
-                >
-                  <td className="px-3 py-2 text-blue-700 underline">
-                    <a href={msg.link}>{msg.subject}</a>
+              {filtered.length > 0 ? (
+                filtered.map((msg, idx) => (
+                  <tr
+                    key={idx}
+                    className="border-b border-gray-200 hover:bg-gray-50"
+                  >
+                    <td className="px-3 py-2 text-blue-700 underline">
+                      <a href={msg.link}>{msg.subject}</a>
+                    </td>
+                    <td className="px-3 py-2">{msg.dateSent}</td>
+                    <td className="px-3 py-2">{msg.dateRead}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={3} className="text-center py-4 text-gray-600">
+                    No messages ever
                   </td>
-                  <td className="px-3 py-2">{msg.dateSent}</td>
-                  <td className="px-3 py-2">{msg.dateRead}</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
@@ -265,7 +327,6 @@ export default function Home() {
           Date modified: <span className="font-medium">2025-07-31</span>
         </div>
 
-        {/* Dark blue section */}
         <div className="bg-[#26374a] text-white py-8">
           <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4 sm:px-8">
             <div className="space-y-2">
@@ -304,7 +365,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Bottom section */}
         <div className="bg-gray-100 py-6">
           <div className="max-w-6xl mx-auto px-4 sm:px-8 text-center text-sm text-gray-700 space-x-4">
             <a href="#" className="hover:underline">
@@ -327,15 +387,8 @@ export default function Home() {
               Privacy
             </a>
           </div>
-
-          {/* Canada logo */}
           <div className="mt-6 flex justify-center">
-            <Image
-              src="/footer.svg"
-              alt="Canada Logo"
-              width={150}
-              height={40}
-            />
+            <Image src="/footer.svg" alt="Canada Logo" width={150} height={40} />
           </div>
         </div>
       </footer>
