@@ -2,6 +2,7 @@
 import React, { useState, useEffect, use } from "react";
 import Image from "next/image";
 import { fetchApplicationByIdAction } from "@/actions/applicationActions";
+import Header from "@/app/header";
 
 export default function Home({
   params,
@@ -29,29 +30,26 @@ export default function Home({
   const filtered = messages.filter((msg) =>
     msg.subject.toLowerCase().includes(search.toLowerCase())
   );
+  const lastModified = applicationData?.lastModified
+    ? new Date(applicationData.lastModified).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+    : new Date().toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
 
   return (
     <div className="bg-white text-black font-sans min-h-screen">
       {/* Header */}
-      <header className="flex justify-between items-center border-b border-gray-300 px-6 py-2">
-        <img
-          src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/sig-blk-en.svg"
-          alt="Government of Canada"
-          className="h-10"
-        />
-        <a href="#" className="text-sm text-blue-700 hover:underline">
-          Français
-        </a>
-      </header>
-
-      {/* Menu */}
-      <nav className="bg-gray-800 px-6 py-2">
-        <button className="text-white text-sm">MENU ▼</button>
-      </nav>
+      <Header/>
 
       {/* Breadcrumb */}
       <div className="text-sm text-gray-700 px-6 py-2">
-        <a href="#" className="text-blue-700 hover:underline">
+        <a href="/" className="text-blue-700 hover:underline">
           Home
         </a>{" "}
         › <span>Account profile</span>
@@ -323,8 +321,8 @@ export default function Home({
 
       {/* Footer */}
       <footer className="mt-12">
-        <div className="px-4 sm:px-8 py-3 text-sm text-gray-600">
-          Date modified: <span className="font-medium">2025-07-31</span>
+        <div className="bg-white px-8 py-4 text-sm text-gray-800 w-full">
+          Date modified: <strong>{lastModified}</strong>
         </div>
 
         <div className="bg-[#26374a] text-white py-8">

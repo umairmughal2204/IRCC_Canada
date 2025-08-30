@@ -1,5 +1,3 @@
-// app/identity-verification/page.tsx
-
 "use client";
 
 import { use, useEffect, useState } from "react";
@@ -7,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   fetchSecurityQuestionsAction,
   verifySecurityAnswerAction,
+  fetchApplicationByIdAction,
 } from "@/actions/applicationActions";
 
 interface SecurityQuestion {
@@ -21,29 +20,33 @@ export default function IdentityVerificationPage({
 }) {
   const { id } = use(params);
   const router = useRouter();
+  const [applicationData, setApplicationData] = useState<any>(null);
   const [question, setQuestion] = useState<SecurityQuestion | null>(null);
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Fetch security questions and pick a random one
+  // Fetch application data and security questions
   useEffect(() => {
-    async function fetchQuestion() {
+    async function fetchData() {
       try {
-        const res = await fetchSecurityQuestionsAction(id);
-        if (res.data && res.data.length > 0) {
-          const randomIndex = Math.floor(Math.random() * res.data.length);
-          setQuestion(res.data[randomIndex]);
+        const appRes = await fetchApplicationByIdAction(id);
+        if (appRes.data) setApplicationData(appRes.data);
+
+        const questionsRes = await fetchSecurityQuestionsAction(id);
+        if (questionsRes.data && questionsRes.data.length > 0) {
+          const randomIndex = Math.floor(Math.random() * questionsRes.data.length);
+          setQuestion(questionsRes.data[randomIndex]);
         } else {
           setError("No security questions found for this account.");
         }
       } catch {
-        setError("Failed to load security questions.");
+        setError("Failed to load application or security questions.");
       } finally {
         setLoading(false);
       }
     }
-    fetchQuestion();
+    fetchData();
   }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -83,6 +86,18 @@ export default function IdentityVerificationPage({
       router.push("/sign-in");
     }
   };
+
+  const dateModified = applicationData?.lastModified
+    ? new Date(applicationData.lastModified).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+    : new Date().toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-gray-800">
@@ -150,7 +165,7 @@ export default function IdentityVerificationPage({
       <div className="bg-gray-100 border-b border-gray-300 text-sm">
         <div className="max-w-6xl mx-auto flex justify-end items-center px-4 py-2 space-x-3">
           <span>
-            Signed in as <strong>AZEEM LIAQAT</strong>
+            Signed in as <strong>{applicationData?.applicantName || "Loading..."}</strong>
           </span>
           <span>|</span>
           <a href="#" className="text-[#284162] hover:underline">
@@ -242,7 +257,7 @@ export default function IdentityVerificationPage({
       {/* Footer */}
       <footer className="mt-16">
         <div className="bg-white px-8 py-4 text-sm text-gray-800 w-full">
-          Date modified: <strong>2024-07-20</strong>
+          Date modified: <strong>{dateModified}</strong>
         </div>
 
         <div className="bg-[#e9ecef] w-full">

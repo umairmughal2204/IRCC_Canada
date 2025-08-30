@@ -1,6 +1,6 @@
 "use server";
 
-import { loginApplication, verifyOtpAndLogin, sendOtp, getCurrentApplication } from "@/functions/authFunctions";
+import { loginApplication, verifyOtpAndLogin, sendOtp, getCurrentApplication, loginAdmin } from "@/functions/authFunctions";
 import { cookies } from "next/headers";
 import { connectToDatabase } from "@/lib/db";
 
@@ -143,4 +143,58 @@ export async function getCurrentApplicationAction() {
     console.error("Failed to get current application:", err);
     return null;
   }
+}
+
+
+/**
+ * LOGIN Admin (Direct token, no OTP)
+ */
+export async function loginAdminAction(
+  prevState: ApplicationAuthFormState,
+  formData: FormData | Record<string, any>
+): Promise<ApplicationAuthFormState> {
+  await connectToDatabase();
+
+  // Extract form data
+  const email =
+    typeof (formData as any).get === "function"
+      ? (formData as FormData).get("email")?.toString()
+      : (formData as any).email;
+
+  const password =
+    typeof (formData as any).get === "function"
+      ? (formData as FormData).get("password")?.toString()
+      : (formData as any).password;
+
+  if (!email || !password) {
+    return { error: { message: ["Admin email and password are required"] } };
+  }
+
+  try {
+    console.log(email,password)
+    // Call loginAdmin function that uses bcrypt and Admin schema
+    const { token, admin } = await loginAdmin(email, password);
+
+    // Save token in httpOnly cookie
+    const cookieStore = await cookies();
+    cookieStore.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+
+    return { data: { admin } };
+  } catch (error: any) {
+    return { error: { message: [error.message || "Admin login failed"] } };
+  }
+}
+
+export async function logoutAdminAction() {
+  const cookieStore = await cookies();
+
+  // Correct usage: pass an object with name and options
+  cookieStore.delete({ name: "token", path: "/" });
+
+  return { success: true, message: "Admin logged out successfully" };
 }

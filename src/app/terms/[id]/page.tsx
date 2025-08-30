@@ -1,8 +1,8 @@
-// app/terms/page.tsx
 "use client";
 
 import { useRouter } from "next/navigation";
-import { use } from "react";
+import { useState, useEffect, use } from "react";
+import { fetchApplicationByIdAction } from "@/actions/applicationActions";
 
 export default function TermsPage({
   params,
@@ -11,6 +11,18 @@ export default function TermsPage({
 }) {
   const { id } = use(params);
   const router = useRouter();
+
+  const [applicationData, setApplicationData] = useState<any>(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetchApplicationByIdAction(id);
+      if (res.data) {
+        setApplicationData(res.data);
+      }
+    }
+    fetchData();
+  }, [id]);
 
   const handleAccept = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +39,19 @@ export default function TermsPage({
       router.push("/");
     }
   };
+
+  // Dynamic footer date
+  const dateModified = applicationData?.lastModified
+    ? new Date(applicationData.lastModified).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+    : new Date().toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
 
   return (
     <main className="min-h-screen bg-white text-gray-900">
@@ -86,7 +111,7 @@ export default function TermsPage({
       {/* Breadcrumb */}
       <div className="bg-gray-100 border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-4 py-2 text-sm">
-          <a href="#" className="text-[#284162] hover:underline">
+          <a href="/" className="text-[#284162] hover:underline">
             Home
           </a>{" "}
           &gt; Terms and Conditions
@@ -94,16 +119,15 @@ export default function TermsPage({
       </div>
 
       {/* Signed in */}
-      {/* Signed in (moved to right side) */}
       <div className="max-w-6xl mx-auto px-4 mt-4 text-sm text-gray-700 flex justify-end items-center space-x-2">
         <span>
-          Signed in as <strong>AZEEM LIAQAT</strong>
+          Signed in as{" "}
+          <strong>{applicationData?.applicantName || "Loading..."}</strong>
         </span>
         <a href="#" className="text-[#284162] hover:underline font-medium ml-4">
           Logout
         </a>
       </div>
-
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 my-8">
@@ -165,13 +189,12 @@ export default function TermsPage({
             access to your personal information.
           </p>
 
-          {/* Buttons aligned left */}
+          {/* Buttons */}
           <form
             onSubmit={handleAccept}
             className="mt-6 flex flex-wrap justify-start gap-4"
           >
             <button
-            
               type="submit"
               className="bg-[#284162] text-white px-6 py-2 rounded hover:bg-[#1e3250]"
             >
@@ -198,12 +221,11 @@ export default function TermsPage({
         </div>
       </div>
 
-
       {/* Footer */}
       <footer className="mt-16">
-        {/* Date Modified */}
+        {/* Dynamic Date Modified */}
         <div className="bg-white px-8 py-4 text-sm text-gray-800 w-full">
-          Date modified: <strong>2024-07-20</strong>
+          Date modified: <strong>{dateModified}</strong>
         </div>
 
         {/* Footer Columns */}
@@ -213,9 +235,21 @@ export default function TermsPage({
             <div>
               <h4 className="font-bold text-lg mb-4">About</h4>
               <ul className="space-y-3">
-                <li><a href="#" className="text-blue-800 hover:underline">About GCKey</a></li>
-                <li><a href="#" className="text-blue-800 hover:underline">Enabled Services</a></li>
-                <li><a href="#" className="text-blue-800 hover:underline">Site Map</a></li>
+                <li>
+                  <a href="#" className="text-blue-800 hover:underline">
+                    About GCKey
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-blue-800 hover:underline">
+                    Enabled Services
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-blue-800 hover:underline">
+                    Site Map
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -223,8 +257,16 @@ export default function TermsPage({
             <div>
               <h4 className="font-bold text-lg mb-4">Transparency</h4>
               <ul className="space-y-3">
-                <li><a href="#" className="text-blue-800 hover:underline">Proactive Disclosure</a></li>
-                <li><a href="#" className="text-blue-800 hover:underline">Terms and Conditions</a></li>
+                <li>
+                  <a href="#" className="text-blue-800 hover:underline">
+                    Proactive Disclosure
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-blue-800 hover:underline">
+                    Terms and Conditions
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -232,7 +274,11 @@ export default function TermsPage({
             <div>
               <h4 className="font-bold text-lg mb-4">Contact Us</h4>
               <ul className="space-y-3">
-                <li><a href="#" className="text-blue-800 hover:underline">Phone Numbers</a></li>
+                <li>
+                  <a href="#" className="text-blue-800 hover:underline">
+                    Phone Numbers
+                  </a>
+                </li>
               </ul>
             </div>
           </div>

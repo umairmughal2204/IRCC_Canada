@@ -3,6 +3,7 @@
 import React, { use, useState, useEffect } from "react";
 import Image from "next/image";
 import { fetchApplicationByIdAction } from "@/actions/applicationActions";
+import Header from "@/app/header";
 
 export default function AccountPage({
   params,
@@ -20,13 +21,17 @@ export default function AccountPage({
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-      const res = await fetchApplicationByIdAction(id);
-      if (res.data) {
-        setApplication(res.data);
-        // Assuming messages are stored inside the application document
-        setMessages(res.data.messages || []);
+      try {
+        const res = await fetchApplicationByIdAction(id);
+        if (res.data) {
+          setApplication(res.data);
+          setMessages(res.data.messages || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch application:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
     fetchData();
   }, [id]);
@@ -35,28 +40,27 @@ export default function AccountPage({
     msg.subject.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Dynamic last modified date
+  const lastModified = application?.lastModified
+    ? new Date(application.lastModified).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+    : new Date().toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
+
   return (
     <div className="bg-white text-black font-sans min-h-screen">
       {/* Header */}
-      <header className="flex justify-between items-center border-b border-gray-300 px-6 py-2">
-        <img
-          src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/sig-blk-en.svg"
-          alt="Government of Canada"
-          className="h-10"
-        />
-        <a href="#" className="text-sm text-blue-700 hover:underline">
-          Français
-        </a>
-      </header>
-
-      {/* Menu */}
-      <nav className="bg-gray-800 px-6 py-2">
-        <button className="text-white text-sm">MENU ▼</button>
-      </nav>
+      <Header />
 
       {/* Breadcrumb */}
       <div className="text-sm text-gray-700 px-6 py-2">
-        <a href="#" className="text-blue-700 hover:underline">
+        <a href="/" className="text-blue-700 hover:underline">
           Home
         </a>{" "}
         › <span>Your account</span>
@@ -87,7 +91,6 @@ export default function AccountPage({
 
       {/* Main content */}
       <main className="px-6 mt-6 max-w-6xl mx-auto">
-        {/* Title */}
         <h1 className="text-2xl font-bold mb-4 border-b-2 border-red-700 inline-block">
           {application?.applicantName || "User"}'s account
         </h1>
@@ -97,7 +100,7 @@ export default function AccountPage({
           View the applications you submitted
         </h2>
         <p className="text-sm mb-4">
-          Review, check the status or read messages about your submitted
+          Review, check the status, or read messages about your submitted
           application.
         </p>
 
@@ -211,12 +214,19 @@ export default function AccountPage({
             1
           </button>
         </div>
+
+        {/* Report Problem */}
+        <div className="mt-4">
+          <button className="border border-gray-400 px-3 py-1 rounded text-sm hover:bg-gray-100">
+            Report a problem or mistake on this page
+          </button>
+        </div>
       </main>
 
       {/* Footer */}
       <footer className="mt-12">
         <div className="px-4 sm:px-8 py-3 text-sm text-gray-600">
-          Date modified: <span className="font-medium">2025-07-31</span>
+          Date modified: <span className="font-medium">{lastModified}</span>
         </div>
         <div className="bg-[#26374a] text-white py-8">
           <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4 sm:px-8">

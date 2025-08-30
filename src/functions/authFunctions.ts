@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import { IApplication } from "@/models/Application";
 import { sendOtpEmail } from "@/lib/sendOtpEmail";  // Import the OTP email sending function
 import { generateOtp } from "@/lib/generateOtp";  // Import the OTP generation function
+import { Admin, IAdmin } from "@/models/Admin";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 if (!JWT_SECRET) throw new Error("JWT_SECRET not defined");
@@ -51,7 +52,39 @@ export const loginApplication = async (userName: string, password: string) => {
     applicationId: app._id.toString(), // Return the application ID to be used for OTP verification
   };
 };
+/**
+ * Admin login function
+ */
+export const loginAdmin = async (email: string, password: string) => {
+  await connectToDatabase();
 
+  // Find admin by username
+  const admin = await Admin.findOne({ email }).select("+password") as IAdmin | null;
+  if (!admin) throw new Error("Invalid admin email or password");
+
+  // Compare password with hashed password
+  const isMatch = await bcrypt.compare(password, admin.password);
+  if (!isMatch) throw new Error("Invalid admin email or password");
+
+  // Generate JWT token for admin
+  const token = jwt.sign(
+    { _id: admin._id.toString(), email: admin.email, role: "admin" },
+    JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  return {
+    message: "Admin login successful",
+    token,
+    admin: {
+      _id: admin._id.toString(),
+      userName: admin.userName,
+      email: admin.email,
+      createdAt: admin.createdAt?.toISOString(),
+      updatedAt: admin.updatedAt?.toISOString(),
+    },
+  };
+};
 /**
  * Send OTP to user's email for 2FA verification
  * Generates and sends OTP to email

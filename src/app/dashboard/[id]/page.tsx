@@ -1,31 +1,37 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { use, useTransition } from "react";
-import { sendOtpAction } from "@/actions/authActions"; // adjust path
+import { use, useTransition, useEffect, useState } from "react";
+import { sendOtpAction } from "@/actions/authActions";
+import { fetchApplicationByIdAction } from "@/actions/applicationActions";
 
 export default function DashboardPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  // Await the params
   const { id } = use(params);
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [applicationData, setApplicationData] = useState<any>(null);
+
+  // Fetch application data dynamically
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetchApplicationByIdAction(id);
+      if (res.data) setApplicationData(res.data);
+    }
+    fetchData();
+  }, [id]);
 
   const handleClick = async () => {
     startTransition(async () => {
       try {
-        // call server action
         const res = await sendOtpAction(id);
-
         if (res.error) {
           alert(res.error.message?.[0] ?? "Failed to send OTP");
           return;
         }
-
-        // ✅ redirect only after OTP is successfully sent
         router.push(`/twofactor/${id}`);
       } catch (err) {
         console.error(err);
@@ -39,7 +45,7 @@ export default function DashboardPage({
       {/* Header */}
       <header className="bg-white border-b w-full">
         <div className="w-full flex items-center justify-between px-8 py-5 max-w-none">
-          {/* Left: Logo and Gov Text */}
+          {/* Logo + Gov Text */}
           <div className="flex items-center space-x-6">
             <img
               src="https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Canada_%28Pantone%29.svg"
@@ -66,7 +72,7 @@ export default function DashboardPage({
           </a>
         </div>
 
-        {/* Navigation Bar */}
+        {/* Navigation */}
         <nav className="w-screen bg-[#2f4b72] text-white text-sm border-t border-b border-white/20">
           <div className="grid grid-cols-[40px_1fr_1fr_1fr_40px] w-screen">
             <div className="border-r border-white/20"></div>
@@ -77,7 +83,7 @@ export default function DashboardPage({
             </div>
             <div className="flex items-center justify-center border-r border-white/20 py-3">
               <a href="#" className="hover:underline text-[16px]">
-                Frequently Asked Questions (FAQ)
+                FAQ
               </a>
             </div>
             <div className="flex items-center justify-center border-r border-white/20 py-3">
@@ -93,7 +99,10 @@ export default function DashboardPage({
       {/* Breadcrumb */}
       <div className="w-full max-w-[1400px] mx-auto px-8 pt-6 text-left">
         <p className="text-sm text-gray-700 mb-2">
-          Home ➜ <span className="text-blue-800">Welcome Azeem.liaqat1999</span>
+          Home ➜{" "}
+          <span className="text-blue-800">
+            {applicationData?.applicantName ?? "Loading..."}
+          </span>
         </p>
       </div>
 
@@ -103,31 +112,27 @@ export default function DashboardPage({
           {/* Main Content Box */}
           <div className="flex-1 p-2 order-1 md:order-1">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              Welcome Azeem.liaqat1999
+              Welcome {applicationData?.applicantName ?? "Loading..."}
             </h1>
+
             <p className="text-gray-800 mb-4">
               You last signed in with your GCKey on{" "}
-              <strong>Thursday, August 28, 2025 at 15:21:28 ET.</strong>
+              <strong>
+                {applicationData?.updatedAt
+                  ? new Date(applicationData.updatedAt).toLocaleString()
+                  : "Loading..."}
+              </strong>
+              .
             </p>
 
             <p className="text-gray-800 mb-6">
-              From this page you can{" "}
-              <a href="#" className="text-blue-800 hover:underline">
-                Change Your Password
-              </a>
-              ,{" "}
-              <a href="#" className="text-blue-800 hover:underline">
-                Change Your Recovery Questions
-              </a>
-              ,{" "}
-              <a href="#" className="text-blue-800 hover:underline">
-                Manage Your Email Address
-              </a>{" "}
-              or{" "}
-              <a href="#" className="text-blue-800 hover:underline">
-                Revoke Your GCKey
-              </a>
-              .
+              Application Number:{" "}
+              <strong>{applicationData?.applicationNumber ?? "Loading..."}</strong>
+            </p>
+
+            <p className="text-gray-800 mb-6">
+              Status:{" "}
+              <strong>{applicationData?.status ?? "Pending"}</strong>
             </p>
 
             <p className="text-gray-800 mb-4">
@@ -179,7 +184,12 @@ export default function DashboardPage({
       {/* Footer */}
       <footer className="mt-16">
         <div className="bg-white px-8 py-4 text-sm text-gray-800 w-full">
-          Date modified: <strong>2024-07-20</strong>
+          Date modified:{" "}
+          <strong>
+            {applicationData?.updatedAt
+              ? new Date(applicationData.updatedAt).toLocaleDateString()
+              : "Loading..."}
+          </strong>
         </div>
         <div className="bg-[#e9ecef] w-full">
           <div className="w-full px-8 py-10 grid grid-cols-1 md:grid-cols-3 gap-12 text-sm text-gray-900">

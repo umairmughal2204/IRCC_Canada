@@ -162,22 +162,6 @@ export default function Header() {
         </div>
       )}
 
-      {/* Breadcrumb */}
-      <nav className="bg-white">
-        <div className="max-w-6xl mx-auto text-xs text-gray-700 px-4 sm:px-8 py-3 flex flex-wrap space-x-1">
-          <a href="#" className="text-blue-700 hover:underline">
-            Canada.ca
-          </a>
-          <span>›</span>
-          <a href="#" className="text-blue-700 hover:underline">
-            Immigration and citizenship
-          </a>
-          <span>›</span>
-          <a href="#" className="text-blue-700 hover:underline">
-            IRCC applications
-          </a>
-        </div>
-      </nav>
     </header>
   );
 }
