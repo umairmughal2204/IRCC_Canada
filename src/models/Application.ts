@@ -1,4 +1,3 @@
-"use server";
 import mongoose, { Schema, Document, Model, Types } from "mongoose";
 
 // Application Status Enum
