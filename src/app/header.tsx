@@ -59,13 +59,25 @@ export default function Header() {
   return (
     <header className="border-b border-gray-300 relative">
       {/* Top bar: Wordmark + Search + Lang */}
-      <div className="flex justify-between items-center px-6 py-3">
         {/* Wordmark (Canada logo + bilingual text) */}
-        <img
-          src="https://www.canada.ca/etc/designs/canada/wet-boew/assets/sig-blk-en.svg"
-          alt="Government of Canada"
-          className="h-12"
-        />
+        <div className="w-full flex items-center justify-between px-8 py-5 max-w-none">
+          {/* Logo + Gov Text */}
+          <div className="flex items-center space-x-6">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Canada_%28Pantone%29.svg"
+              alt="Canadian Flag"
+              className="w-20 h-20"
+            />
+            <div className="leading-tight">
+              <p className="text-lg font-bold">Government</p>
+              <p className="text-lg font-bold">of Canada</p>
+            </div>
+            <div className="ml-6 border-l h-8 border-gray-300"></div>
+            <div className="leading-tight">
+              <p className="text-lg font-bold">Gouvernement</p>
+              <p className="text-lg font-bold">du Canada</p>
+            </div>
+          </div>
 
         <div className="flex items-center space-x-4">
           {/* Search */}
