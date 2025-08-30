@@ -11,23 +11,25 @@ import {
   addMessageToApplication,
   markMessagesRead,
 } from "@/functions/applicationFuntions";
+import { ApplicationStatus, BiometricsStatus } from "@/models/Application";
 
 // ✅ Zod Validation Schema
 const biometricsSchema = z.object({
   number: z.string().trim().min(1, "Biometrics number is required"),
   enrolmentDate: z.coerce.date(),
   expiryDate: z.coerce.date(),
-  status: z.string().optional(),
+  status: z.nativeEnum(BiometricsStatus).optional(),
 });
 
 const applicationSchema = z.object({
   userName: z.string().trim().min(2, "Username is required"),
   password: z.string().min(4, "Password must be at least 4 characters"),
+  email: z.string().trim().email("Valid email is required"),
   applicationType: z.string().trim().min(2, "Application type is required"),
   applicationNumber: z.string().trim().min(2, "Application number is required"),
   applicantName: z.string().trim().min(2, "Applicant name is required"),
   dateOfSubmission: z.coerce.date(),
-  status: z.string().optional(),
+  status: z.nativeEnum(ApplicationStatus).optional(),
   uniqueClientIdentifier: z.string().trim().min(2, "UCI is required"),
   biometrics: biometricsSchema,
 });
@@ -44,6 +46,7 @@ function parseApplicationFormData(formData: FormData): Record<string, any> {
   return {
     userName: formData.get("userName") || "",
     password: formData.get("password") || "",
+    email: formData.get("email") || "",
     applicationType: formData.get("applicationType") || "",
     applicationNumber: formData.get("applicationNumber") || "",
     applicantName: formData.get("applicantName") || "",

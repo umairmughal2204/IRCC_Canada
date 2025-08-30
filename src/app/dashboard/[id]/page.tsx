@@ -1,10 +1,16 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { use, useTransition } from "react";
 import { sendOtpAction } from "@/actions/authActions"; // adjust path
 
-export default function DashboardPage({ applicationId }: { applicationId: string }) {
+export default function DashboardPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  // Await the params
+  const { id } = use(params);
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -12,7 +18,7 @@ export default function DashboardPage({ applicationId }: { applicationId: string
     startTransition(async () => {
       try {
         // call server action
-        const res = await sendOtpAction(applicationId);
+        const res = await sendOtpAction(id);
 
         if (res.error) {
           alert(res.error.message?.[0] ?? "Failed to send OTP");

@@ -1,15 +1,20 @@
-// app/twofactor/page.tsx
 "use client"; // Ensure this component is a client component
 import { useRouter } from "next/navigation";
-
 import Image from "next/image";
+import { useActionState } from "react"; // ✅ updated import
+import { verifyOtpAction } from "@/actions/authActions"; // adjust path if needed
 
 export default function TwoFactorPage() {
   const router = useRouter();
 
-  const handleClick = () => {
-    router.push("/auth-success"); // redirect to /twpfactor
-  };
+  // ✅ useActionState instead of useFormState
+  const [state, formAction] = useActionState(verifyOtpAction, {});
+
+  // If OTP is verified successfully, redirect
+  if (state?.data?.application) {
+    router.push("/auth-success");
+  }
+
   return (
     <main className="min-h-screen bg-white text-gray-900">
       {/* Header */}
@@ -70,8 +75,6 @@ export default function TwoFactorPage() {
             </a>
           </div>
         </nav>
-
-
       </header>
 
       {/* Layout Container */}
@@ -119,30 +122,35 @@ export default function TwoFactorPage() {
         </div>
 
         {/* Form */}
-        <form className="space-y-6">
+        <form className="space-y-6" action={formAction}>
           <div>
             <label
-              htmlFor="code"
+              htmlFor="otp"
               className="block font-semibold mb-1 text-gray-900"
             >
               <span className="text-red-600">*</span> One-time passcode{" "}
               <span className="text-red-600 text-sm">(Required field)</span>
             </label>
             <input
-              id="code"
-              name="code"
+              id="otp"
+              name="otp"
               type="text"
               required
               className="w-full border border-gray-400 rounded px-3 py-1"
             />
           </div>
 
+          {/* Show error if OTP fails */}
+          {state?.error && (
+            <p className="text-red-600 text-sm">
+              {typeof state.error.message === "string"
+                ? state.error.message
+                : (state.error.message || []).join(", ")}
+            </p>
+          )}
+
           <div className="flex gap-4">
             <button
-              onClick={(e) => {
-                e.preventDefault(); // Prevent form submission
-                handleClick();      // Redirect to /dashboard
-              }}
               type="submit"
               className="bg-[#BC3331] text-white px-6 py-2 rounded hover:bg-[#A82C2A]"
             >
@@ -211,6 +219,5 @@ export default function TwoFactorPage() {
         </div>
       </footer>
     </main>
-
   );
 }

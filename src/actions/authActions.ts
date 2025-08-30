@@ -60,7 +60,7 @@ export async function loginApplicationAction(
  */
 export async function sendOtpAction(applicationId: string): Promise<ApplicationAuthFormState> {
   await connectToDatabase();
-
+  console.log(applicationId)
   try {
     // Call the sendOtp function with the applicationId to send OTP to the registered email
     await sendOtp(applicationId);

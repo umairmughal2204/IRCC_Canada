@@ -1,4 +1,4 @@
-import { Application } from "@/models/Application";
+import { Application, ApplicationStatus, BiometricsStatus } from "@/models/Application";
 
 /**
  * Sanitize and format incoming application data.
@@ -6,32 +6,34 @@ import { Application } from "@/models/Application";
 const sanitizeApplicationData = (data: {
   userName: string;
   password: string;
+  email: string;
   applicationType: string;
   applicationNumber: string;
   applicantName: string;
   dateOfSubmission: Date;
-  status?: string;
+  status?: ApplicationStatus;
   uniqueClientIdentifier: string;
   biometrics: {
     number: string;
     enrolmentDate: Date;
     expiryDate: Date;
-    status?: string;
+    status?: BiometricsStatus;
   };
 }) => ({
   userName: data.userName.trim(),
   password: data.password, // ⚠️ should be hashed before save (if used in production)
+  email: data.email.toLowerCase().trim(),
   applicationType: data.applicationType.trim(),
   applicationNumber: data.applicationNumber.trim(),
   applicantName: data.applicantName.trim(),
   dateOfSubmission: data.dateOfSubmission,
-  status: data.status || "Pending",
+  status: data.status || ApplicationStatus.Pending,
   uniqueClientIdentifier: data.uniqueClientIdentifier.trim(),
   biometrics: {
     number: data.biometrics.number.trim(),
     enrolmentDate: data.biometrics.enrolmentDate,
     expiryDate: data.biometrics.expiryDate,
-    status: data.biometrics.status || "Valid",
+    status: data.biometrics.status || BiometricsStatus.NotCompleted,
   },
 });
 
@@ -41,13 +43,18 @@ const sanitizeApplicationData = (data: {
 const serializeApplication = (application: any) => ({
   _id: application._id.toString(),
   userName: application.userName,
+  email: application.email,
   applicationType: application.applicationType,
   applicationNumber: application.applicationNumber,
   applicantName: application.applicantName,
   dateOfSubmission: application.dateOfSubmission?.toISOString?.(),
   status: application.status,
   uniqueClientIdentifier: application.uniqueClientIdentifier,
-  biometrics: application.biometrics,
+  biometrics: {
+    ...application.biometrics,
+    enrolmentDate: application.biometrics?.enrolmentDate?.toISOString?.(),
+    expiryDate: application.biometrics?.expiryDate?.toISOString?.(),
+  },
   messages: application.messages?.map((msg: any) => ({
     content: msg.content,
     sentAt: msg.sentAt?.toISOString?.(),
@@ -63,17 +70,18 @@ const serializeApplication = (application: any) => ({
 export const createApplication = async (data: {
   userName: string;
   password: string;
+  email: string;
   applicationType: string;
   applicationNumber: string;
   applicantName: string;
   dateOfSubmission: Date;
-  status?: string;
+  status?: ApplicationStatus;
   uniqueClientIdentifier: string;
   biometrics: {
     number: string;
     enrolmentDate: Date;
     expiryDate: Date;
-    status?: string;
+    status?: BiometricsStatus;
   };
 }) => {
   const appData = sanitizeApplicationData(data);
@@ -105,17 +113,18 @@ export const updateApplication = async (
   data: {
     userName: string;
     password: string;
+    email: string;
     applicationType: string;
     applicationNumber: string;
     applicantName: string;
     dateOfSubmission: Date;
-    status?: string;
+    status?: ApplicationStatus;
     uniqueClientIdentifier: string;
     biometrics: {
       number: string;
       enrolmentDate: Date;
       expiryDate: Date;
-      status?: string;
+      status?: BiometricsStatus;
     };
   }
 ) => {

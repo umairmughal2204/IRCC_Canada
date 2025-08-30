@@ -1,15 +1,32 @@
+"use server";
 import mongoose, { Schema, Document, Model, Types } from "mongoose";
+
+// Application Status Enum
+export enum ApplicationStatus {
+  Pending = "Pending",
+  Approved = "Approved",
+  Rejected = "Rejected",
+  InReview = "InReview",
+}
+
+// Biometrics Status Enum
+export enum BiometricsStatus {
+  Completed = "Completed",
+  NotCompleted = "NotCompleted",
+  Expired = "Expired",
+}
 
 // Interface for Application document
 export interface IApplication extends Document {
   _id: Types.ObjectId;
   userName: string;
   password: string;
+  email: string;
   applicationType: string;
   applicationNumber: string;
-  applicantName: string; // or Principal Applicant
+  applicantName: string;
   dateOfSubmission: Date;
-  status: string;
+  status: ApplicationStatus;
 
   messages: {
     content: string;
@@ -23,8 +40,12 @@ export interface IApplication extends Document {
     number: string;
     enrolmentDate: Date;
     expiryDate: Date;
-    status: string;
+    status: BiometricsStatus;
   };
+
+  // 🔑 OTP-related fields
+  otpCode?: string;
+  otpExpires?: Date;
 
   createdAt: Date;
   updatedAt: Date;
@@ -41,6 +62,14 @@ const applicationSchema = new Schema<IApplication>(
     password: {
       type: String,
       required: [true, "Password is required"],
+    },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [/.+@.+\..+/, "Please enter a valid email address"],
     },
     applicationType: {
       type: String,
@@ -63,7 +92,8 @@ const applicationSchema = new Schema<IApplication>(
     },
     status: {
       type: String,
-      default: "Pending",
+      enum: Object.values(ApplicationStatus),
+      default: ApplicationStatus.Pending,
     },
     messages: [
       {
@@ -81,7 +111,21 @@ const applicationSchema = new Schema<IApplication>(
       number: { type: String, required: true },
       enrolmentDate: { type: Date, required: true },
       expiryDate: { type: Date, required: true },
-      status: { type: String, default: "Valid" },
+      status: {
+        type: String,
+        enum: Object.values(BiometricsStatus),
+        default: BiometricsStatus.NotCompleted,
+      },
+    },
+
+    // 🔑 OTP fields
+    otpCode: {
+      type: String,
+      select: false, // hidden unless explicitly requested
+    },
+    otpExpires: {
+      type: Date,
+      select: false,
     },
   },
   {

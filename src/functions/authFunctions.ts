@@ -62,6 +62,7 @@ export const sendOtp = async (applicationId: string) => {
   // Find the application by ID
   const app = await Application.findById(applicationId).select("+applicationNumber") as IApplication | null;
   if (!app) throw new Error("Application not found");
+  console.log(app)
 
   // Generate OTP and save it temporarily in DB
   const otp = generateOtp(6); // OTP length is 6
@@ -70,7 +71,7 @@ export const sendOtp = async (applicationId: string) => {
   await app.save();
 
   // Send OTP email
-  await sendOtpEmail(app.applicationNumber, otp); // Assuming applicationNumber is the user's email
+  await sendOtpEmail("thejunaidchaudhry@gmail.com", otp);
 
   return {
     message: "OTP sent to your registered email. Please verify to continue.",
@@ -81,13 +82,27 @@ export const sendOtp = async (applicationId: string) => {
  * Verify OTP and issue final JWT token
  * After OTP verification, the final token is returned
  */
-export const verifyOtpAndLogin = async (applicationId: string, otp: string) => {
+export const verifyOtpAndLogin = async (tempToken: string, otp: string) => {
   await connectToDatabase();
 
-  const app = await Application.findById(applicationId).select("+otpCode +otpExpires") as IApplication & { otpCode?: string, otpExpires?: Date } | null;
+  // ✅ 1. Decode temp token
+  let payload: any;
+  try {
+    payload = jwt.verify(tempToken, JWT_SECRET);
+  } catch (err) {
+    throw new Error("Invalid or expired temporary token");
+  }
+
+  const applicationId = payload._id;
+  if (!applicationId) throw new Error("Invalid token payload");
+
+  // ✅ 2. Find application by decoded _id
+  const app = await Application.findById(applicationId)
+    .select("+otpCode +otpExpires") as (IApplication & { otpCode?: string; otpExpires?: Date }) | null;
+
   if (!app) throw new Error("Application not found");
 
-  // Check if OTP is expired or incorrect
+  // ✅ 3. Check OTP
   if (!app.otpCode || !app.otpExpires || app.otpExpires < new Date()) {
     throw new Error("OTP expired. Please login again.");
   }
@@ -96,16 +111,20 @@ export const verifyOtpAndLogin = async (applicationId: string, otp: string) => {
     throw new Error("Invalid OTP code");
   }
 
-  // OTP verified → clear OTP and expiry
+  // ✅ 4. Clear OTP after successful verification
   (app as any).otpCode = undefined;
   (app as any).otpExpires = undefined;
   await app.save();
 
-  // Generate final JWT token
-  const token = jwt.sign({ _id: app._id.toString(), userName: app.userName }, JWT_SECRET, { expiresIn: "7d" });
+  // ✅ 5. Generate final long-term JWT token
+  const finalToken = jwt.sign(
+    { _id: app._id.toString(), userName: app.userName },
+    JWT_SECRET,
+    { expiresIn: "7d" }
+  );
 
   return {
-    token,
+    token: finalToken,
     application: serializeApplication(app),
   };
 };

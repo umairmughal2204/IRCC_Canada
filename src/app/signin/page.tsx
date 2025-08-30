@@ -22,7 +22,7 @@ export default function SignInPage() {
             if (result?.error) {
                 setError(result.error.message?.[0] || "Login failed");
             } else {
-                router.push("/dashboard"); // redirect on success
+                router.push(`/dashboard/${result.data?.applicationId}`); // redirect on success
             }
         } catch (err) {
             setError("Something went wrong. Please try again.");

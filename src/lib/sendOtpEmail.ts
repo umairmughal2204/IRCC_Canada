@@ -11,7 +11,7 @@ export async function sendOtpEmail(to: string, otp: string) {
   });
 
   const mailOptions = {
-    from: `"GCKey Canada" <${process.env.EMAIL_USER}>`,
+    from: `"GCKey Canada" <${process.env.EMAIL_dUSER}>`,
     to,
     subject: "GCKey One-Time Passcode from Canada 🇨🇦",
     html: `

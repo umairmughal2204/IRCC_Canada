@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useActionState } from "react"; // adjust import if needed
+import { useActionState } from "react"; // adjust if using a different hook
 import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import {
@@ -25,7 +24,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 
-import { createApplicationAction } from "@/actions/applicationActions"; // you will create this
+import { createApplicationAction } from "@/actions/applicationActions";
+import { ApplicationStatus, BiometricsStatus } from "@/types/application";
 
 interface FieldErrors {
   [key: string]: string[];
@@ -77,7 +77,10 @@ export default function ApplicationForm() {
       <Card className="max-w-3xl mx-auto shadow-lg bg-white dark:bg-gray-800 pt-4">
         <CardHeader className="flex items-center justify-between border-none">
           <CardTitle>Create / Update Application</CardTitle>
-          <Button variant="secondary" onClick={() => router.push("/admin/applications")}>
+          <Button
+            variant="secondary"
+            onClick={() => router.push("/admin/applications")}
+          >
             Back to Applications
           </Button>
         </CardHeader>
@@ -115,6 +118,22 @@ export default function ApplicationForm() {
               )}
             </div>
 
+            {/* Email */}
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                required
+                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
+                placeholder="Enter applicant email"
+              />
+              {errorFor("email") && (
+                <p className="text-sm text-red-500">{errorFor("email")}</p>
+              )}
+            </div>
+
             {/* Application Type */}
             <div className="space-y-2">
               <Label htmlFor="applicationType">Application Type</Label>
@@ -126,7 +145,9 @@ export default function ApplicationForm() {
                 placeholder="Type of application"
               />
               {errorFor("applicationType") && (
-                <p className="text-sm text-red-500">{errorFor("applicationType")}</p>
+                <p className="text-sm text-red-500">
+                  {errorFor("applicationType")}
+                </p>
               )}
             </div>
 
@@ -141,13 +162,17 @@ export default function ApplicationForm() {
                 placeholder="Enter application number"
               />
               {errorFor("applicationNumber") && (
-                <p className="text-sm text-red-500">{errorFor("applicationNumber")}</p>
+                <p className="text-sm text-red-500">
+                  {errorFor("applicationNumber")}
+                </p>
               )}
             </div>
 
-            {/* Applicant Name / Principal Applicant */}
+            {/* Applicant Name */}
             <div className="space-y-2">
-              <Label htmlFor="applicantName">Applicant Name / Principal Applicant</Label>
+              <Label htmlFor="applicantName">
+                Applicant Name / Principal Applicant
+              </Label>
               <Input
                 id="applicantName"
                 name="applicantName"
@@ -156,13 +181,17 @@ export default function ApplicationForm() {
                 placeholder="Enter applicant name"
               />
               {errorFor("applicantName") && (
-                <p className="text-sm text-red-500">{errorFor("applicantName")}</p>
+                <p className="text-sm text-red-500">
+                  {errorFor("applicantName")}
+                </p>
               )}
             </div>
 
             {/* Date of Submission */}
             <div className="space-y-2">
-              <Label htmlFor="dateOfSubmission">Date of Application Submission</Label>
+              <Label htmlFor="dateOfSubmission">
+                Date of Application Submission
+              </Label>
               <Input
                 id="dateOfSubmission"
                 name="dateOfSubmission"
@@ -171,37 +200,30 @@ export default function ApplicationForm() {
                 className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
               />
               {errorFor("dateOfSubmission") && (
-                <p className="text-sm text-red-500">{errorFor("dateOfSubmission")}</p>
+                <p className="text-sm text-red-500">
+                  {errorFor("dateOfSubmission")}
+                </p>
               )}
             </div>
 
             {/* Status */}
             <div className="space-y-2">
               <Label htmlFor="status">Status of Application</Label>
-              <Input
+              <select
                 id="status"
                 name="status"
+                className="w-full rounded-md border-none shadow-sm bg-gray-50 dark:bg-gray-700 p-2"
                 required
-                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
-                placeholder="Pending / Approved / Rejected"
-              />
+                defaultValue={ApplicationStatus.Approved}
+              >
+                {Object.values(ApplicationStatus).map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
               {errorFor("status") && (
                 <p className="text-sm text-red-500">{errorFor("status")}</p>
-              )}
-            </div>
-
-            {/* Messages */}
-            <div className="space-y-2">
-              <Label htmlFor="messages">Messages (Send / Read Status)</Label>
-              <Textarea
-                id="messages"
-                name="messages"
-                rows={3}
-                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
-                placeholder="Enter messages or status"
-              />
-              {errorFor("messages") && (
-                <p className="text-sm text-red-500">{errorFor("messages")}</p>
               )}
             </div>
 
@@ -230,12 +252,16 @@ export default function ApplicationForm() {
                 placeholder="Enter biometrics number"
               />
               {errorFor("biometricsNumber") && (
-                <p className="text-sm text-red-500">{errorFor("biometricsNumber")}</p>
+                <p className="text-sm text-red-500">
+                  {errorFor("biometricsNumber")}
+                </p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="dateOfBiometrics">Date of Biometrics Enrolment</Label>
+              <Label htmlFor="dateOfBiometrics">
+                Date of Biometrics Enrolment
+              </Label>
               <Input
                 id="dateOfBiometrics"
                 name="dateOfBiometrics"
@@ -243,7 +269,9 @@ export default function ApplicationForm() {
                 className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
               />
               {errorFor("dateOfBiometrics") && (
-                <p className="text-sm text-red-500">{errorFor("dateOfBiometrics")}</p>
+                <p className="text-sm text-red-500">
+                  {errorFor("dateOfBiometrics")}
+                </p>
               )}
             </div>
 
@@ -262,14 +290,22 @@ export default function ApplicationForm() {
 
             <div className="space-y-2">
               <Label htmlFor="biometricStatus">Status of Biometrics</Label>
-              <Input
+              <select
                 id="biometricStatus"
                 name="biometricStatus"
-                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
-                placeholder="Pending / Completed"
-              />
+                className="w-full rounded-md border-none shadow-sm bg-gray-50 dark:bg-gray-700 p-2"
+                defaultValue={BiometricsStatus.Completed}
+              >
+                {Object.values(BiometricsStatus).map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
               {errorFor("biometricStatus") && (
-                <p className="text-sm text-red-500">{errorFor("biometricStatus")}</p>
+                <p className="text-sm text-red-500">
+                  {errorFor("biometricStatus")}
+                </p>
               )}
             </div>
 
@@ -282,7 +318,9 @@ export default function ApplicationForm() {
 
             <CardFooter className="flex justify-end border-none">
               <Button type="submit" disabled={isPending}>
-                {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 {isPending ? "Saving..." : "Save Application"}
               </Button>
             </CardFooter>
