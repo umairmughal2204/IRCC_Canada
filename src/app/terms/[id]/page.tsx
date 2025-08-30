@@ -1,32 +1,35 @@
-// app/identity-verification/page.tsx
-
+// app/terms/page.tsx
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { use } from "react";
 
-export default function IdentityVerificationPage() {
-  const [answer, setAnswer] = useState("");
+export default function TermsPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = use(params);
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleAccept = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!answer.trim()) {
-      alert("Please provide an answer to the security question.");
-      return;
-    }
-    // ✅ After success, go to auth success
-    router.push("/data");
+    alert("Thank you for accepting the Terms and Conditions. Redirecting...");
+    router.push(`/identity/${id}`); // change route as needed
   };
 
-  const handleLogout = () => {
-    if (confirm("Are you sure you want to logout?")) {
-      router.push("/sign-in");
+  const handleDecline = () => {
+    if (
+      confirm(
+        "If you do not accept the Terms and Conditions, you will not be able to access your account. Are you sure?"
+      )
+    ) {
+      router.push("/");
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-gray-800">
+    <main className="min-h-screen bg-white text-gray-900">
       {/* Header */}
       <header className="bg-white border-b w-full">
         <div className="w-full flex items-center justify-between px-8 py-5 max-w-none">
@@ -79,105 +82,123 @@ export default function IdentityVerificationPage() {
           </div>
         </nav>
       </header>
-      
+
       {/* Breadcrumb */}
-      <div className="bg-gray-50 border-b border-gray-200 py-2">
-        <div className="max-w-6xl mx-auto px-4 text-sm text-gray-600">
-          <a href="/" className="text-[#284162] hover:underline">
+      <div className="bg-gray-100 border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-4 py-2 text-sm">
+          <a href="#" className="text-[#284162] hover:underline">
             Home
           </a>{" "}
-          &gt; Identity Verification
+          &gt; Terms and Conditions
         </div>
       </div>
 
-      {/* User Info Bar */}
-      <div className="bg-gray-100 border-b border-gray-300 text-sm">
-        <div className="max-w-6xl mx-auto flex justify-end items-center px-4 py-2 space-x-3">
-          <span>
-            Signed in as <strong>AZEEM LIAQAT</strong>
-          </span>
-          <span>|</span>
-          <a href="#" className="text-[#284162] hover:underline">
-            Account home
-          </a>
-          <span>|</span>
-          <a href="#" className="text-[#284162] hover:underline">
-            Account profile
-          </a>
-          <span>|</span>
-          <a href="#" className="text-[#284162] hover:underline">
-            Help
-          </a>
-          <span>|</span>
-          <button
-            onClick={handleLogout}
-            className="text-[#284162] hover:underline"
-          >
-            Logout
-          </button>
-        </div>
+      {/* Signed in */}
+      {/* Signed in (moved to right side) */}
+      <div className="max-w-6xl mx-auto px-4 mt-4 text-sm text-gray-700 flex justify-end items-center space-x-2">
+        <span>
+          Signed in as <strong>AZEEM LIAQAT</strong>
+        </span>
+        <a href="#" className="text-[#284162] hover:underline font-medium ml-4">
+          Logout
+        </a>
       </div>
+
 
       {/* Main Content */}
-{/* Main Content */}
-<main className="flex-grow w-full px-8 py-8">
-  <h1 className="text-3xl font-semibold text-gray-800 border-b pb-2 mb-6">
-    Identity Verification
-  </h1>
+      <div className="max-w-6xl mx-auto px-4 my-8">
+        <h1 className="text-2xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-6">
+          Terms and Conditions
+        </h1>
 
-  {/* Left aligned content */}
-  <div className="bg-white p-6">
-    <p className="mb-4">
-      For security reasons, additional identification is required to
-      access your account.
-    </p>
-    <p className="mb-6">Please answer the following secret question:</p>
+        <div className="bg-white p-6 space-y-4">
+          <p>
+            By accessing your account, you are agreeing to abide by the
+            following Terms and Conditions of Use:
+          </p>
 
-    <form onSubmit={handleSubmit} className="w-full max-w-lg">
-      <div className="mb-6">
-        <label className="block font-semibold mb-2 text-lg">
-          "my favourite car"{" "}
-          <span className="text-red-600">(required)</span>
-        </label>
-        <input
-          type="text"
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#284162]"
-          required
-        />
+          <ul className="list-disc pl-6 space-y-2">
+            <li>
+              You agree to keep your identification number(s) confidential and
+              to not share it (them) with anyone. If you suspect that others
+              have obtained your identification number(s), contact us
+              immediately.
+            </li>
+            <li>
+              You certify that any information provided by you is true, accurate
+              and complete.
+            </li>
+            <li>
+              You understand and accept that as a security measure for
+              administrative reasons, we can revoke your access if you fail to
+              abide by the Terms and Conditions of Use.
+            </li>
+            <li>
+              You understand and accept that we are not responsible for any
+              losses or damages incurred by anyone because of:
+            </li>
+          </ul>
+
+          <ol className="list-decimal pl-10 space-y-1">
+            <li>The use of the information available in your account</li>
+            <li>
+              Any restrictions, delay, malfunction, or unavailability of your
+              account
+            </li>
+          </ol>
+
+          <ul className="list-disc pl-6 space-y-2">
+            <li>
+              You understand and accept that by using your account and applying
+              online, we can communicate with you (or your representative, if
+              applicable) via e-mail.
+            </li>
+            <li>
+              To continue, choose "I Accept" to indicate your acceptance. If you
+              do not agree, choose "I Do Not Accept".
+            </li>
+          </ul>
+
+          <p>
+            It is important that you sign out and close your browser before
+            leaving this computer unattended. This will prevent unauthorized
+            access to your personal information.
+          </p>
+
+          {/* Buttons aligned left */}
+          <form
+            onSubmit={handleAccept}
+            className="mt-6 flex flex-wrap justify-start gap-4"
+          >
+            <button
+            
+              type="submit"
+              className="bg-[#284162] text-white px-6 py-2 rounded hover:bg-[#1e3250]"
+            >
+              I Accept
+            </button>
+            <button
+              type="button"
+              onClick={handleDecline}
+              className="bg-gray-100 border border-gray-300 px-6 py-2 rounded hover:bg-gray-200"
+            >
+              I Do Not Accept
+            </button>
+          </form>
+        </div>
+
+        {/* Report a problem */}
+        <div className="text-left mt-6">
+          <a
+            href="#"
+            className="bg-gray-100 border border-gray-300 px-6 py-2 rounded hover:bg-gray-200"
+          >
+            Report a problem or mistake on this page
+          </a>
+        </div>
       </div>
 
-      <div className="flex space-x-4">
-        <button
-          type="submit"
-          className="bg-[#284162] text-white px-6 py-2 rounded hover:bg-[#1e3250]"
-        >
-          Continue
-        </button>
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="bg-gray-100 px-6 py-2 rounded border hover:bg-gray-200"
-        >
-          Logout
-        </button>
-      </div>
-    </form>
-  </div>
 
-  {/* Report problem - aligned left */}
-  <div className="mt-6">
-    <a
-      href="#"
-      className="inline-block border px-6 py-2 rounded bg-gray-100 hover:bg-gray-200"
-    >
-      Report a problem or mistake on this page
-    </a>
-  </div>
-</main>
-
-     
       {/* Footer */}
       <footer className="mt-16">
         {/* Date Modified */}
@@ -228,6 +249,7 @@ export default function IdentityVerificationPage() {
             className="h-8"
           />
         </div>
-      </footer>    </div>
+      </footer>
+    </main>
   );
 }

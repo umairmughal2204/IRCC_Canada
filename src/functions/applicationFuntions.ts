@@ -21,7 +21,7 @@ const sanitizeApplicationData = (data: {
   };
 }) => ({
   userName: data.userName.trim(),
-  password: data.password, // ⚠️ should be hashed before save (if used in production)
+  password: data.password, // ⚠️ should be hashed before save
   email: data.email.toLowerCase().trim(),
   applicationType: data.applicationType.trim(),
   applicationNumber: data.applicationNumber.trim(),
@@ -59,6 +59,10 @@ const serializeApplication = (application: any) => ({
     content: msg.content,
     sentAt: msg.sentAt?.toISOString?.(),
     isRead: msg.isRead,
+  })),
+  securityQuestions: application.securityQuestions?.map((q: any) => ({
+    _id: q._id?.toString(),
+    question: q.question,
   })),
   createdAt: application.createdAt?.toISOString?.(),
   updatedAt: application.updatedAt?.toISOString?.(),
@@ -170,4 +174,84 @@ export const markMessagesRead = async (id: string) => {
     { new: true }
   ).lean();
   return application ? serializeApplication(application) : null;
+};
+
+/**
+ * ================= SECURITY QUESTIONS =================
+ */
+
+/**
+ * Add a new security question
+ */
+export const addSecurityQuestion = async (
+  id: string,
+  question: string,
+  answer: string
+) => {
+  const application = await Application.findByIdAndUpdate(
+    id,
+    { $push: { securityQuestions: { question, answer } } },
+    { new: true, runValidators: true }
+  ).lean();
+  return application ? serializeApplication(application) : null;
+};
+
+/**
+ * Update a security question's answer
+ */
+export const updateSecurityQuestion = async (
+  id: string,
+  questionId: string,
+  newAnswer: string
+) => {
+  const application = await Application.findOneAndUpdate(
+    { _id: id, "securityQuestions._id": questionId },
+    { $set: { "securityQuestions.$.answer": newAnswer } },
+    { new: true }
+  ).lean();
+  return application ? serializeApplication(application) : null;
+};
+
+/**
+ * Delete a security question
+ */
+export const deleteSecurityQuestion = async (
+  id: string,
+  questionId: string
+) => {
+  const application = await Application.findByIdAndUpdate(
+    id,
+    { $pull: { securityQuestions: { _id: questionId } } },
+    { new: true }
+  ).lean();
+  return application ? serializeApplication(application) : null;
+};
+
+/**
+ * Get security questions (without answers)
+ */
+export const getSecurityQuestions = async (id: string) => {
+  const application = await Application.findById(id)
+    .select("securityQuestions.question securityQuestions._id")
+    .lean();
+  return application ? application.securityQuestions : [];
+};
+
+/**
+ * Verify a security question answer
+ */
+export const verifySecurityAnswer = async (
+  id: string,
+  questionId: string,
+  answer: string
+) => {
+  const application = await Application.findOne({
+    _id: id,
+    "securityQuestions._id": questionId,
+  })
+    .select("securityQuestions.$")
+    .lean();
+
+  if (!application || !application.securityQuestions?.length) return false;
+  return application.securityQuestions[0].answer === answer;
 };

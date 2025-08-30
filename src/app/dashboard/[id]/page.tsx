@@ -26,7 +26,7 @@ export default function DashboardPage({
         }
 
         // ✅ redirect only after OTP is successfully sent
-        router.push("/twofactor");
+        router.push(`/twofactor/${id}`);
       } catch (err) {
         console.error(err);
         alert("Something went wrong.");

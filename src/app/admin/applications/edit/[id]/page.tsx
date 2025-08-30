@@ -28,7 +28,7 @@ import {
   fetchApplicationByIdAction,
   updateApplicationAction,
 } from "@/actions/applicationActions";
-import { ApplicationStatus, BiometricsStatus } from "@/models/Application";
+import { ApplicationStatus, BiometricsStatus } from "@/types/application";
 
 interface FieldErrors {
   [key: string]: string[];

@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import {
   fetchAllApplicationsAction,
   deleteApplicationAction,
-} from "@/actions/applicationActions"
+} from "@/actions/applicationActions";
 
 import {
   Card,
@@ -45,7 +45,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Eye, Pencil, Trash2, Loader2 } from "lucide-react";
+import { Eye, Pencil, Trash2, Loader2, HelpCircle } from "lucide-react";
 
 interface IApplication {
   _id: string;
@@ -76,12 +76,14 @@ function ApplicationsTable({
   onView,
   onEdit,
   onDelete,
+  onQuestions,
   loading,
 }: {
   applications: IApplication[];
   onView: (id: string) => void;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
+  onQuestions: (id: string) => void; // new handler
   loading: boolean;
 }) {
   if (loading) {
@@ -103,7 +105,7 @@ function ApplicationsTable({
             <TableHead>Application #</TableHead>
             <TableHead>Date Submitted</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead className="w-[140px] text-right">Actions</TableHead>
+            <TableHead className="w-[200px] text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -148,6 +150,15 @@ function ApplicationsTable({
                       title="Delete"
                     >
                       <Trash2 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => onQuestions(app._id)}
+                      title="Security Questions"
+                    >
+                      <HelpCircle className="h-4 w-4" />
                     </Button>
                   </div>
                 </TableCell>
@@ -265,6 +276,7 @@ export default function ApplicationsPage() {
             onView={(id) => router.push(`/admin/applications/view/${id}`)}
             onEdit={(id) => router.push(`/admin/applications/edit/${id}`)}
             onDelete={(id) => setConfirmDeleteId(id)}
+            onQuestions={(id) => router.push(`/admin/applications/${id}/questions`)}
             loading={loading}
           />
         </Suspense>

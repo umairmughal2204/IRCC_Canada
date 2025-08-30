@@ -34,6 +34,12 @@ export interface IApplication extends Document {
     isRead: boolean;
   }[];
 
+  // ✅ Security questions
+  securityQuestions: {
+    question: string;
+    answer: string;
+  }[];
+
   uniqueClientIdentifier: string;
 
   biometrics: {
@@ -102,6 +108,15 @@ const applicationSchema = new Schema<IApplication>(
         isRead: { type: Boolean, default: false },
       },
     ],
+
+    // ✅ Security questions field
+    securityQuestions: [
+      {
+        question: { type: String, required: true },
+        answer: { type: String, required: true, select: false }, // hide answers unless explicitly selected
+      },
+    ],
+
     uniqueClientIdentifier: {
       type: String,
       required: true,

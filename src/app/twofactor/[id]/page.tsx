@@ -1,10 +1,15 @@
 "use client"; // Ensure this component is a client component
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useActionState } from "react"; // ✅ updated import
+import { use, useActionState } from "react"; // ✅ updated import
 import { verifyOtpAction } from "@/actions/authActions"; // adjust path if needed
 
-export default function TwoFactorPage() {
+export default function TwoFactorPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = use(params);
   const router = useRouter();
 
   // ✅ useActionState instead of useFormState
@@ -12,7 +17,7 @@ export default function TwoFactorPage() {
 
   // If OTP is verified successfully, redirect
   if (state?.data?.application) {
-    router.push("/auth-success");
+    router.push(`/auth-success/${id}`);
   }
 
   return (

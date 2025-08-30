@@ -1,4 +1,11 @@
-export default function AuthSuccessPage() {
+import { use } from "react";
+
+export default function AuthSuccessPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = use(params);
   return (
     <div className="min-h-screen flex flex-col bg-white text-[#2f4b72]">
       {/* Header */}
@@ -84,7 +91,7 @@ export default function AuthSuccessPage() {
         {/* Continue button */}
         <div className="mt-8">
           <a
-            href="/terms"
+            href={`/terms${id}`}
             className="bg-[#335075] text-white px-6 py-2 rounded hover:bg-[#2a3d5a]"
           >
             Continue
