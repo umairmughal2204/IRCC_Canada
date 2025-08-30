@@ -1,4 +1,4 @@
-import { Application } from "@/model/Application";
+import { Application } from "@/models/Application";
 
 /**
  * Sanitize and format incoming application data.

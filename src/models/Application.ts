@@ -1,7 +1,8 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Document, Model, Types } from "mongoose";
 
 // Interface for Application document
 export interface IApplication extends Document {
+  _id: Types.ObjectId;
   userName: string;
   password: string;
   applicationType: string;

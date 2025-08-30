@@ -44,15 +44,7 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
 
   const navItems: NavItem[] = [
     { path: "/admin", label: "Dashboard", icon: LayoutDashboard },
-    { path: "/admin/users", label: "Users", icon: Users },
-    { path: "/admin/categories", label: "Categories", icon: Layers },
-    { path: "/admin/products", label: "Products", icon: Package },
-    { path: "/admin/orders", label: "Orders", icon: ClipboardList },
-    { path: "/admin/leaderBoard", label: "Leader Board", icon: Trophy },
-    { path: "/admin/wallet", label: "Wallet", icon: Wallet },
-    { path: "/admin/giftCards", label: "Gift Cards", icon: BadgeHelp },
-    { path: "/admin/paymentgateway", label: "Payment Gateways", icon: CreditCard },
-    { path: "/admin/chat", label: "Chat", icon: MessageSquare },
+    { path: "/admin/applications", label: "Applications", icon: Users },
   ];
 
   const isActive = (path: string) =>
