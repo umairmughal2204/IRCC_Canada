@@ -171,9 +171,6 @@ export default function SignInPage() {
 
             {/* Footer */}
             <footer className="mt-16">
-                <div className="bg-white px-8 py-4 text-sm text-gray-800 w-full">
-                    Date modified: <strong>2024-07-20</strong>
-                </div>
                 <div className="bg-[#e9ecef] w-full">
                     <div className="w-full px-8 py-10 grid grid-cols-1 md:grid-cols-3 gap-12 text-sm text-gray-900">
                         <div>
