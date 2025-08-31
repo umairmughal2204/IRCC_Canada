@@ -33,28 +33,28 @@ export default function Home({
   );
   const lastModified = applicationData?.lastModified
     ? new Date(applicationData.lastModified).toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    })
     : new Date().toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      });
-      const handleLogout = async () => {
-          try {
-            await logoutApplicationAction(); // Call server action
-            window.location.href = "/signin"; // Redirect to login page
-          } catch (err) {
-            console.error("Logout failed", err);
-          }
-        };
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  const handleLogout = async () => {
+    try {
+      await logoutApplicationAction(); // Call server action
+      window.location.href = "/signin"; // Redirect to login page
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
 
   return (
     <div className="bg-white text-black font-sans min-h-screen">
       {/* Header */}
-      <Header/>
+      <Header />
 
       {/* Breadcrumb */}
       <div className="text-sm text-gray-700 px-6 py-2">
@@ -89,29 +89,58 @@ export default function Home({
           Logout
         </button>
       </div>
+      <div className="border-b-2 border-red-700 mb-4">
+        <h1 className="text-4xl font-bold pl-10 pt-6">
+          Application status and messages
+        </h1>
+      </div>
+
+      {/* Match content with heading alignment */}
+      <div className="pl-10 pr-6 py-6">
+        <p className="text-lg flex items-center whitespace-nowrap">
+          Check the status, review the details and read messages for your application.
+          <a href="#" className="text-blue-800 underline ml-2">
+            View submitted application or upload documents
+          </a>
+        </p>
+
+
+
+        <div className="border-l-4 border-black pl-5 mt-6 w-fit pr-6 py-3">
+          <p className="text-lg">
+            You have 0{" "}
+            <a href="#" className="text-blue-800 underline">
+              unread message(s).
+            </a>
+          </p>
+        </div>
+
+      </div>
+
+
+
 
       {/* Application + Applicant info */}
-      <div className="grid md:grid-cols-2 gap-6 px-6 mt-4">
+      <div className="flex gap-6 px-6 mt-4">
+
         {/* Application status */}
-        <div className="border border-gray-300 rounded">
-          <h2 className="bg-gray-100 px-4 py-2 font-semibold">
+        <div className="border border-gray-300 rounded bg-white w-fit max-w-full">
+          <h2 className="bg-gray-100 px-5 py-3 font-semibold text-xl">
             Application status
           </h2>
-          <div className="p-4 text-sm">
+          <div className="p-5 text-lg leading-relaxed max-w-2xl">
             <p>
               We are processing your application. We will send you a message
               when there is an update or if we need more information from you.
             </p>
-            <p className="mt-3 font-semibold">
+            <p className="mt-4 font-semibold">
               Latest update: <br />
-              Biometrics - {applicationData?.biometrics?.enrolmentDate
-                ? new Date(
-                    applicationData.biometrics.enrolmentDate
-                  ).toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  })
+              Biometrics -{" "}
+              {applicationData?.biometrics?.enrolmentDate
+                ? new Date(applicationData.biometrics.enrolmentDate).toLocaleDateString(
+                  "en-US",
+                  { month: "long", day: "numeric", year: "numeric" }
+                )
                 : "N/A"}{" "}
               : {applicationData?.biometrics?.status || "Pending"}.
             </p>
@@ -119,11 +148,11 @@ export default function Home({
         </div>
 
         {/* Applicant info */}
-        <div className="border border-gray-300 rounded">
-          <h2 className="bg-gray-100 px-4 py-2 font-semibold">
+        <div className="border border-gray-300 rounded bg-white min-w-[420px]">
+          <h2 className="bg-gray-100 px-5 py-3 font-semibold text-xl">
             Applicant information
           </h2>
-          <div className="p-4 text-sm space-y-1">
+          <div className="p-5 text-lg space-y-3 max-w-2xl leading-relaxed">
             <p>
               <strong>Principal Applicant:</strong>{" "}
               {applicationData?.applicantName || "Loading..."}
@@ -139,19 +168,20 @@ export default function Home({
             <p>
               <strong>Date Received:</strong>{" "}
               {applicationData?.dateOfSubmission
-                ? new Date(
-                    applicationData.dateOfSubmission
-                  ).toLocaleDateString("en-US", {
+                ? new Date(applicationData.dateOfSubmission).toLocaleDateString(
+                  "en-US",
+                  {
                     month: "long",
                     day: "numeric",
                     year: "numeric",
-                  })
+                  }
+                )
                 : "Loading..."}
             </p>
             <p>
               <strong>Biometrics:</strong>
             </p>
-            <ul className="ml-4 list-disc">
+            <ul className="ml-6 list-disc space-y-1">
               <li>
                 <strong>Biometrics Number:</strong>{" "}
                 {applicationData?.biometrics?.number || "Loading..."}
@@ -159,73 +189,109 @@ export default function Home({
               <li>
                 <strong>Date of Biometrics Enrolment:</strong>{" "}
                 {applicationData?.biometrics?.enrolmentDate
-                  ? new Date(
-                      applicationData.biometrics.enrolmentDate
-                    ).toLocaleDateString("en-US", {
+                  ? new Date(applicationData.biometrics.enrolmentDate).toLocaleDateString(
+                    "en-US",
+                    {
                       month: "long",
                       day: "numeric",
                       year: "numeric",
-                    })
+                    }
+                  )
                   : "Loading..."}
               </li>
               <li>
                 <strong>Expiry Date:</strong>{" "}
                 {applicationData?.biometrics?.expiryDate
-                  ? new Date(
-                      applicationData.biometrics.expiryDate
-                    ).toLocaleDateString("en-US", {
+                  ? new Date(applicationData.biometrics.expiryDate).toLocaleDateString(
+                    "en-US",
+                    {
                       month: "long",
                       day: "numeric",
                       year: "numeric",
-                    })
+                    }
+                  )
                   : "Loading..."}
               </li>
             </ul>
           </div>
         </div>
+
       </div>
 
-      {/* Details about application */}
-      <div className="mt-8 px-6">
-        <h2 className="text-xl font-semibold mb-2">
-          Details about your application status
-        </h2>
-        <p className="text-sm mb-4">
-          When we get your application, there are a series of steps it may go
-          through before we make a decision. Use the following table to find out
-          the current status of each application step.
-        </p>
 
-        <ul className="space-y-4 text-sm">
+      {/* Details about application */}
+    <div className="mt-8 px-6">
+  <h2 className="text-4xl font-semibold mb-3">
+    Details about your application status
+  </h2>
+  <p className="text-base mb-6 leading-relaxed">
+    When we get your application, there are a series of steps it may go through before we make a decision. Use the following table to find out the current status of each application step.
+  </p>
+
+  <ul className="space-y-6 text-[17px] leading-relaxed">
+    <li className="flex items-start gap-3">
+      <span>📑</span>
+      <div>
+        <div className="flex items-center gap-1 font-bold">
+          <span>Review of eligibility</span>
+          <span className="text-blue-900">❓</span>
+        </div>
+        <ul className="list-disc ml-5 mt-1">
+          <li>We are reviewing whether you meet the eligibility requirements.</li>
+        </ul>
+      </div>
+    </li>
+
+    <li className="flex items-start gap-3">
+      <span>🧾</span>
+      <div>
+        <div className="flex items-center gap-1 font-bold">
+          <span>Review of medical results</span>
+          <span className="text-blue-900">❓</span>
+        </div>
+        <ul className="list-disc ml-5 mt-1">
+          <li>You do not need a medical exam. We will send you a message if this changes.</li>
+        </ul>
+      </div>
+    </li>
+
+    <li className="flex items-start gap-3">
+      <span>📂</span>
+      <div>
+        <div className="flex items-center gap-1 font-bold">
+          <span>Review of additional documents</span>
+          <span className="text-blue-900">❓</span>
+        </div>
+        <ul className="list-disc ml-5 mt-1">
+          <li>We do not need additional documents.</li>
+        </ul>
+      </div>
+    </li>
+
+    <li className="flex items-start gap-3">
+      <span>👥</span>
+      <div>
+        <div className="flex items-center gap-1 font-bold">
+          <span>Interview</span>
+          <span className="text-blue-900">❓</span>
+        </div>
+        <ul className="list-disc ml-5 mt-1">
+          <li>You do not need an interview. We will send you a message if this changes.</li>
+        </ul>
+      </div>
+    </li>
+
+    <li className="flex items-start gap-3">
+      <span>🖐</span>
+      <div>
+        <div className="flex items-center gap-1 font-bold">
+          <span>Biometrics</span>
+          <span className="text-blue-900">❓</span>
+        </div>
+        <ul className="list-disc ml-5 mt-1">
           <li>
-            <strong>📑 Review of eligibility:</strong>
-            <br />
-            We are reviewing whether you meet the eligibility requirements.
-          </li>
-          <li>
-            <strong>🧾 Review of medical results:</strong>
-            <br />
-            You do not need a medical exam. We will send you a message if this
-            changes.
-          </li>
-          <li>
-            <strong>📂 Review of additional documents:</strong>
-            <br />
-            We do not need additional documents.
-          </li>
-          <li>
-            <strong>👥 Interview:</strong>
-            <br />
-            You do not need an interview. We will send you a message if this
-            changes.
-          </li>
-          <li>
-            <strong>🖐 Biometrics:</strong>
-            <br />
             {applicationData?.biometrics?.enrolmentDate
-              ? new Date(
-                  applicationData.biometrics.enrolmentDate
-                ).toLocaleDateString("en-US", {
+              ? new Date(applicationData.biometrics.enrolmentDate).toLocaleDateString("en-US", {
                   month: "long",
                   day: "numeric",
                   year: "numeric",
@@ -233,99 +299,149 @@ export default function Home({
               : "Pending"}{" "}
             {applicationData?.biometrics?.status || ""}
           </li>
-          <li>
-            <strong>🔍 Background check:</strong>
-            <br />
-            We are processing your background check. We will send you a message
-            if we need more information.
-          </li>
-          <li>
-            <strong>⚖️ Final decision:</strong>
-            <br />
-            Your application is in progress. We will send you a message once the
-            final decision has been made.
-          </li>
         </ul>
       </div>
+    </li>
+
+    <li className="flex items-start gap-3">
+      <span>🔍</span>
+      <div>
+        <div className="flex items-center gap-1 font-bold">
+          <span>Background check</span>
+          <span className="text-blue-900">❓</span>
+        </div>
+        <ul className="list-disc ml-5 mt-1">
+          <li>We are processing your background check. We will send you a message if we need more information.</li>
+        </ul>
+      </div>
+    </li>
+
+    <li className="flex items-start gap-3">
+      <span>⚖️</span>
+      <div>
+        <div className="flex items-center gap-1 font-bold">
+          <span>Final decision</span>
+          <span className="text-blue-900">❓</span>
+        </div>
+        <ul className="list-disc ml-5 mt-1">
+          <li>Your application is in progress. We will send you a message once the final decision has been made.</li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</div>
+
+
+
+
+
+
 
       {/* Messages about application (UPDATED) */}
       <div className="mt-10 px-6">
-        <h2 className="text-xl font-semibold mb-2">
+        <h2 className="text-4xl font-semibold mb-4">
           Messages about your application
         </h2>
-        <p className="text-sm text-gray-800">
-          ℹ️ Links and document titles are shown in the language you chose for
-          your portal account when they were generated.
-        </p>
-        <p className="mt-2 text-sm">
+        <div className="flex items-center gap-2 text-gray-800 text-lg max-w-full whitespace-nowrap overflow-hidden">
+          <div className="flex-shrink-0 w-6 h-6 rounded-full bg-cyan-600 flex items-center justify-center">
+            <span className="text-white font-bold text-sm">i</span>
+          </div>
+          <p className="truncate">
+            Links and document titles are shown in the language you chose for your portal account when they were generated.
+          </p>
+        </div>
+        <p className="mt-3 text-lg text-gray-700">
           ({messages.length} New message{messages.length !== 1 ? "s" : ""})
         </p>
 
-        {/* Search + entries */}
-        <div className="flex flex-wrap justify-between items-center mt-4 mb-2 text-sm">
-          <div>
-            Search:{" "}
+
+
+
+        <div className="flex items-center gap-6 mb-2 md:mb-0">
+          <div className="flex items-center gap-2">
+            <label htmlFor="search" className="font-medium">
+              Search:
+            </label>
             <input
+              id="search"
               type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="border border-gray-400 rounded px-2 py-1 ml-1 text-sm"
+              className="border border-gray-300 rounded px-2 py-1 text-base"
             />
           </div>
-          <div>
-            Showing 1 to {filtered.length} of {messages.length} entries | Show{" "}
-            <select className="border border-gray-400 rounded px-1 py-0.5">
+          <div className="text-base text-gray-600">
+            Showing 1 to 1 of 1 entries
+          </div>
+          <div className="flex items-center gap-2">
+            <span>Show</span>
+            <select className="border border-gray-300 rounded px-2 py-1 text-base">
+              <option>5</option>
               <option>10</option>
               <option>25</option>
-              <option>50</option>
-            </select>{" "}
-            entries
+            </select>
+            <span>entries</span>
           </div>
         </div>
 
+
         {/* Table */}
-        <div className="overflow-x-auto border border-gray-300">
-          <table className="w-full text-sm border-collapse">
-            <thead>
-              <tr className="bg-gray-100 border-b border-gray-300 text-left">
-                <th className="px-3 py-2 font-semibold">Subject</th>
-                <th className="px-3 py-2 font-semibold">Date sent</th>
-                <th className="px-3 py-2 font-semibold">Date read</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.length > 0 ? (
-                filtered.map((msg, idx) => (
-                  <tr
-                    key={idx}
-                    className="border-b border-gray-200 hover:bg-gray-50"
-                  >
-                    <td className="px-3 py-2 text-blue-700 underline">
-                      <a href={msg.link}>{msg.subject}</a>
-                    </td>
-                    <td className="px-3 py-2">{msg.dateSent}</td>
-                    <td className="px-3 py-2">{msg.dateRead}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={3} className="text-center py-4 text-gray-600">
-                    No messages ever
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        <table className="min-w-full border border-gray-300 text-left my-4">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="px-4 py-2 font-semibold border border-gray-300 cursor-pointer">
+                Subject <span>⇅</span>
+              </th>
+              <th className="px-4 py-2 font-semibold border border-gray-300 cursor-pointer">
+                Date sent <span>⇅</span>
+              </th>
+              <th className="px-4 py-2 font-semibold border border-gray-300 cursor-pointer">
+                Date read <span>⇅</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="border border-gray-300 hover:bg-gray-50">
+              <td className="px-4 py-2 border border-gray-300 text-blue-700 underline cursor-pointer">
+                Biometrics Collection Letter
+              </td>
+              <td className="px-4 py-2 border border-gray-300">June 27, 2025</td>
+              <td className="px-4 py-2 border border-gray-300">June 27, 2025</td>
+            </tr>
+            <tr className="border border-gray-300 hover:bg-gray-50">
+              <td className="px-4 py-2 border border-gray-300 text-blue-700 underline cursor-pointer">
+                Confirmation of Online Application Transmission
+              </td>
+              <td className="px-4 py-2 border border-gray-300">June 25, 2025</td>
+              <td className="px-4 py-2 border border-gray-300">New Message</td>
+            </tr>
+            <tr className="border border-gray-300 hover:bg-gray-50">
+              <td className="px-4 py-2 border border-gray-300 text-blue-700 underline cursor-pointer">
+                Submission Confirmation
+              </td>
+              <td className="px-4 py-2 border border-gray-300">June 25, 2025</td>
+              <td className="px-4 py-2 border border-gray-300">June 25, 2025</td>
+            </tr>
+          </tbody>
+        </table>
+
+
+
 
         {/* Pagination */}
-        <div className="flex justify-center mt-3">
-          <button className="px-3 py-1 bg-blue-600 text-white rounded">1</button>
+        <div className="flex justify-center mb-10">
+          <button className="px-5 py-2 text-xl bg-blue-600 text-white rounded-lg transition-colors duration-200 hover:bg-gray-500">
+            1
+          </button>
         </div>
+
 
         {/* Report Problem */}
         <div className="mt-4">
-          <button className="border border-gray-400 px-3 py-1 rounded text-sm hover:bg-gray-100">
+          <button
+            className="border border-gray-300 px-4 py-2 rounded text-base 
+                     bg-gray-100 text-blue-600 
+                     hover:bg-gray-300 hover:text-blue-700 
+                     active:bg-gray-400"
+          >
             Report a problem or mistake on this page
           </button>
         </div>
@@ -333,13 +449,13 @@ export default function Home({
 
       {/* Footer */}
       <footer className="mt-12">
-        <div className="bg-white px-8 py-4 text-sm text-gray-800 w-full">
-          Date modified: <strong>{lastModified}</strong>
+        <div className="px-4 sm:px-8 py-3 text-base text-gray-600">
+          Date modified: <span className="font-medium">{lastModified}</span>
         </div>
 
         <div className="bg-[#26374a] text-white py-8">
           <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4 sm:px-8">
-            <div className="space-y-2">
+            <div className="space-y-2 text-base">
               <a href="#" className="block hover:underline">
                 Contact us
               </a>
@@ -350,7 +466,7 @@ export default function Home({
                 Public service and military
               </a>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 text-base">
               <a href="#" className="block hover:underline">
                 News
               </a>
@@ -361,7 +477,7 @@ export default function Home({
                 Government-wide reporting
               </a>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 text-base">
               <a href="#" className="block hover:underline">
                 Prime Minister
               </a>
@@ -375,30 +491,36 @@ export default function Home({
           </div>
         </div>
 
+        {/* Bottom bar */}
         <div className="bg-gray-100 py-6">
-          <div className="max-w-6xl mx-auto px-4 sm:px-8 text-center text-sm text-gray-700 space-x-4">
-            <a href="#" className="hover:underline">
-              Social media
-            </a>
-            <span>•</span>
-            <a href="#" className="hover:underline">
-              Mobile applications
-            </a>
-            <span>•</span>
-            <a href="#" className="hover:underline">
-              About Canada.ca
-            </a>
-            <span>•</span>
-            <a href="#" className="hover:underline">
-              Terms and conditions
-            </a>
-            <span>•</span>
-            <a href="#" className="hover:underline">
-              Privacy
-            </a>
-          </div>
-          <div className="mt-6 flex justify-center">
-            <Image src="/footer.svg" alt="Canada Logo" width={150} height={40} />
+          <div className="max-w-6xl mx-auto px-4 sm:px-8 flex items-center justify-between text-base text-gray-700">
+            {/* Left: Links */}
+            <div className="space-x-4">
+              <a href="#" className="hover:underline">
+                Social media
+              </a>
+              <span>•</span>
+              <a href="#" className="hover:underline">
+                Mobile applications
+              </a>
+              <span>•</span>
+              <a href="#" className="hover:underline">
+                About Canada.ca
+              </a>
+              <span>•</span>
+              <a href="#" className="hover:underline">
+                Terms and conditions
+              </a>
+              <span>•</span>
+              <a href="#" className="hover:underline">
+                Privacy
+              </a>
+            </div>
+
+            {/* Right: Logo */}
+            <div>
+              <Image src="/footer.svg" alt="Canada Logo" width={180} height={50} />
+            </div>
           </div>
         </div>
       </footer>
