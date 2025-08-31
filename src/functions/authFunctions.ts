@@ -104,7 +104,7 @@ export const sendOtp = async (applicationId: string) => {
   await app.save();
 
   // Send OTP email
-  await sendOtpEmail("thejunaidchaudhry@gmail.com", otp);
+  await sendOtpEmail(app.email, otp);
 
   return {
     message: "OTP sent to your registered email. Please verify to continue.",

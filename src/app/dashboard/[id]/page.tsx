@@ -101,7 +101,7 @@ export default function DashboardPage({
         <p className="text-sm text-gray-700 mb-2">
           Home ➜{" "}
           <span className="text-blue-800">
-            {applicationData?.applicantName ?? "Loading..."}
+            {applicationData?.userName ?? "Loading..."}
           </span>
         </p>
       </div>
@@ -112,7 +112,7 @@ export default function DashboardPage({
           {/* Main Content Box */}
           <div className="flex-1 p-2 order-1 md:order-1">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              Welcome {applicationData?.applicantName ?? "Loading..."}
+              Welcome {applicationData?.userName ?? "Loading..."}
             </h1>
 
             <p className="text-gray-800 mb-4">

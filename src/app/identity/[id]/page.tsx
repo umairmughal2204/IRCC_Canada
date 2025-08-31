@@ -165,7 +165,7 @@ export default function IdentityVerificationPage({
       <div className="bg-gray-100 border-b border-gray-300 text-sm">
         <div className="max-w-6xl mx-auto flex justify-end items-center px-4 py-2 space-x-3">
           <span>
-            Signed in as <strong>{applicationData?.applicantName || "Loading..."}</strong>
+            Signed in as <strong>{applicationData?.userName || "Loading..."}</strong>
           </span>
           <span>|</span>
           <a href="#" className="text-[#284162] hover:underline">

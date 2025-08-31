@@ -122,7 +122,7 @@ export default function TermsPage({
       <div className="max-w-6xl mx-auto px-4 mt-4 text-sm text-gray-700 flex justify-end items-center space-x-2">
         <span>
           Signed in as{" "}
-          <strong>{applicationData?.applicantName || "Loading..."}</strong>
+          <strong>{applicationData?.userName || "Loading..."}</strong>
         </span>
         <a href="#" className="text-[#284162] hover:underline font-medium ml-4">
           Logout
