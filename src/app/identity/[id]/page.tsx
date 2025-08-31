@@ -244,13 +244,15 @@ export default function IdentityVerificationPage({
           )}
         </div>
 
-        <div className="mt-6">
-          <a
-            href="#"
-            className="inline-block border px-6 py-2 rounded bg-gray-100 hover:bg-gray-200"
+        <div className="mt-4">
+          <button
+            className="border border-gray-300 px-4 py-2 rounded text-base 
+                     bg-gray-100 text-blue-600 
+                     hover:bg-gray-300 hover:text-blue-700 
+                     active:bg-gray-400"
           >
             Report a problem or mistake on this page
-          </a>
+          </button>
         </div>
       </main>
 

@@ -89,11 +89,14 @@ export default function Home({
           Logout
         </button>
       </div>
-      <div className="border-b-2 border-red-700 mb-4">
-        <h1 className="text-4xl font-bold pl-10 pt-6">
-          Application status and messages
-        </h1>
-      </div>
+      <div className="mb-4 px-6">
+  <div className="border-b-2 border-red-700 w-full pb-2">
+    <h1 className="text-4xl font-bold pt-6">
+      Application status and messages
+    </h1>
+  </div>
+</div>
+
 
       {/* Match content with heading alignment */}
       <div className="pl-10 pr-6 py-6">

@@ -111,41 +111,65 @@ export default function DashboardPage({
         <div className="flex flex-col md:flex-row gap-8">
           {/* Main Content Box */}
           <div className="flex-1 p-2 order-1 md:order-1">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              Welcome {applicationData?.userName ?? "Loading..."}
-            </h1>
+            <div className="border-b-2 border-red-700 mb-4">
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                Welcome {applicationData?.userName ?? "Loading..."}
+              </h1>
+            </div>
+            <div className="px-6 py-8 text-[17px] text-gray-800 space-y-5">
+              <p>
+                You last signed in with your GCKey on{" "}
+                <strong>
+                  {applicationData?.updatedAt
+                    ? new Date(applicationData.updatedAt).toLocaleString("en-US", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                      hour12: false,
+                      timeZoneName: "short",
+                    })
+                    : "Loading..."}
+                </strong>
+              </p>
 
-            <p className="text-gray-800 mb-4">
-              You last signed in with your GCKey on{" "}
-              <strong>
-                {applicationData?.updatedAt
-                  ? new Date(applicationData.updatedAt).toLocaleString()
-                  : "Loading..."}
-              </strong>
-              .
-            </p>
+              <p>
+                From this page you can{" "}
+                <a href="#" className="text-blue-800 underline hover:text-blue-900">
+                  Change Your Password
+                </a>
+                ,{" "}
+                <a href="#" className="text-blue-800 underline hover:text-blue-900">
+                  Change Your Recovery Questions
+                </a>
+                ,{" "}
+                <a href="#" className="text-blue-800 underline hover:text-blue-900">
+                  Manage Your Email Address
+                </a>{" "}
+                or{" "}
+                <a href="#" className="text-blue-800 underline hover:text-blue-900">
+                  Revoke Your GCKey
+                </a>
+                .
+              </p>
 
-            <p className="text-gray-800 mb-6">
-              Application Number:{" "}
-              <strong>{applicationData?.applicationNumber ?? "Loading..."}</strong>
-            </p>
+              <p>
+                To help protect your information, please remember to sign out and close your
+                browser before leaving this computer unattended.
+              </p>
 
-            <p className="text-gray-800 mb-6">
-              Status:{" "}
-              <strong>{applicationData?.status ?? "Pending"}</strong>
-            </p>
+              <p>
+                Please select <strong>Continue</strong> to proceed to two-factor authentication.
+              </p>
 
-            <p className="text-gray-800 mb-4">
-              To help protect your information, please remember to sign out and
-              close your browser before leaving this computer unattended.
-            </p>
 
-            <p className="text-gray-800 mb-6">
-              Please select <strong>Continue</strong> to proceed to two-factor
-              authentication.
-            </p>
 
-            <div className="text-center md:text-left">
+
+            </div>
+            <div className="pt-4 flex justify-center">
               <button
                 onClick={handleClick}
                 disabled={isPending}

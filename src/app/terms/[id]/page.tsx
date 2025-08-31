@@ -26,7 +26,6 @@ export default function TermsPage({
 
   const handleAccept = (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Thank you for accepting the Terms and Conditions. Redirecting...");
     router.push(`/identity/${id}`); // change route as needed
   };
 
@@ -131,7 +130,7 @@ export default function TermsPage({
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 my-8">
-        <h1 className="text-2xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-6">
+        <h1 className="text-4xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-6">
           Terms and Conditions
         </h1>
 
@@ -211,13 +210,15 @@ export default function TermsPage({
         </div>
 
         {/* Report a problem */}
-        <div className="text-left mt-6">
-          <a
-            href="#"
-            className="bg-gray-100 border border-gray-300 px-6 py-2 rounded hover:bg-gray-200"
+        <div className="mt-4">
+          <button
+            className="border border-gray-300 px-4 py-2 rounded text-base 
+                     bg-gray-100 text-blue-600 
+                     hover:bg-gray-300 hover:text-blue-700 
+                     active:bg-gray-400"
           >
             Report a problem or mistake on this page
-          </a>
+          </button>
         </div>
       </div>
 
