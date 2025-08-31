@@ -315,7 +315,7 @@ export default function Home({
                 <i className="fa fa-lg fa-question-circle text-blue-900" aria-hidden="true"></i>
               </div>
               <ul className="list-disc ml-5 mt-1">
-                <li>May 20, 2025 Completed</li>
+                <li>May 24, 2025 Completed</li>
               </ul>
             </div>
           </li>
