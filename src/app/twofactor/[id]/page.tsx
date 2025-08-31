@@ -5,6 +5,7 @@ import { use, useActionState } from "react";
 import { verifyOtpAction } from "@/actions/authActions";
 import { fetchApplicationByIdAction } from "@/actions/applicationActions";
 import { useEffect, useState } from "react";
+import { sendOtpAction } from "@/actions/authActions";
 
 export default function TwoFactorPage({
   params,
@@ -15,9 +16,28 @@ export default function TwoFactorPage({
   const router = useRouter();
 
   const [applicationData, setApplicationData] = useState<any>(null);
+  const [isResending, setIsResending] = useState(false);
+
 
   // ✅ Correct usage: initial state should match the action's expected state type
   const [state, formAction] = useActionState(verifyOtpAction, {});
+
+  const handleResend = async () => {
+    try {
+      setIsResending(true);
+      const res = await sendOtpAction(id); // send OTP for current user
+      if (res.error) {
+        alert(res.error.message?.[0] ?? "Failed to resend OTP");
+        return;
+      }
+      alert("OTP has been resent to your email!");
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong while resending OTP.");
+    } finally {
+      setIsResending(false);
+    }
+  };
 
   // Fetch application data dynamically
   useEffect(() => {
@@ -38,9 +58,10 @@ export default function TwoFactorPage({
   // Mask email for privacy
   const maskedEmail = applicationData?.email
     ? `${applicationData.email[0]}*****${applicationData.email
-        .split("@")[0]
-        .slice(-1)}@${applicationData.email.split("@")[1]}`
+      .split("@")[0]
+      .slice(-1)}@${applicationData.email.split("@")[1]}`
     : "Loading...";
+
 
   return (
     <main className="min-h-screen bg-white text-gray-900">
@@ -190,10 +211,13 @@ export default function TwoFactorPage({
           </p>
           <button
             type="button"
-            className="border border-gray-400 px-6 py-2 rounded hover:bg-gray-100"
+            onClick={handleResend}
+            disabled={isResending}
+            className="border border-gray-400 px-6 py-2 rounded hover:bg-gray-100 disabled:opacity-50"
           >
-            Resend code
+            {isResending ? "Resending..." : "Resend code"}
           </button>
+
         </div>
 
         {/* Recovery */}
