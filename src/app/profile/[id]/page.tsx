@@ -315,7 +315,7 @@ export default function Home({
                 <i className="fa fa-lg fa-question-circle text-blue-900" aria-hidden="true"></i>
               </div>
               <ul className="list-disc ml-5 mt-1">
-                <li>We are processing your background check. We will send you a message if we need more information.</li>
+                <li>May 20, 2025 Completed</li>
               </ul>
             </div>
           </li>
