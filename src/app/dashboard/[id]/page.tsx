@@ -267,10 +267,10 @@ export default function DashboardPage({
         </div>
         <div className="bg-white py-6 px-8 flex justify-end w-full">
           <img
-            src="https://upload.wikimedia.org/wikipedia/commons/0/0f/Canada_wordmark.svg"
-            alt="Canada wordmark"
-            className="h-8"
-          />
+                        src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_43/wet-boew/assets/wmms-blk.svg"
+                        alt="Canada logo"
+                        className="h-8"
+                    />
         </div>
       </footer>
     </div>
