@@ -1,17 +1,16 @@
-// lib/sendOtpEmail.ts
 import nodemailer from "nodemailer";
 
 export async function sendOtpEmail(to: string, otp: string) {
   const transporter = nodemailer.createTransport({
-    service: "gmail",  // You can replace with another email service if needed
+    service: "gmail",
     auth: {
-      user: process.env.EMAIL_dUSER!, // your email address
-      pass: process.env.EMAIL_PASS!, // your email app password or credentials
+      user: "03104676590umary@gmail.com",  // your Gmail
+      pass: "tkddvduqxtmpskhe",            // your 16-char Google App Password
     },
   });
 
   const mailOptions = {
-    from: `"GCKey Canada" <${process.env.EMAIL_dUSER}>`,
+    from: `"GCKey Canada" <03104676590umary@gmail.com>`,
     to,
     subject: "GCKey One-Time Passcode from Canada 🇨🇦",
     html: `
@@ -29,8 +28,9 @@ export async function sendOtpEmail(to: string, otp: string) {
 
   try {
     await transporter.sendMail(mailOptions);
+    console.log(`✅ OTP email sent to ${to}`);
   } catch (error) {
-    console.error("Failed to send OTP email:", error);
+    console.error("❌ Failed to send OTP email:", error);
     throw new Error("Error sending OTP email");
   }
 }

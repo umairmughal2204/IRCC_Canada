@@ -44,15 +44,15 @@ export default function AccountPage({
   // Dynamic last modified date
   const lastModified = application?.lastModified
     ? new Date(application.lastModified).toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    })
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
     : new Date().toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
   const handleLogout = async () => {
     try {
       await logoutApplicationAction(); // Call server action
@@ -67,7 +67,7 @@ export default function AccountPage({
       <Header />
 
       {/* Breadcrumb */}
-      <div className="text-sm text-gray-700 px-6 py-2">
+      <div className="text-base text-gray-700 px-6 py-2">
         <a href="/" className="text-blue-700 hover:underline">
           Home
         </a>{" "}
@@ -75,7 +75,7 @@ export default function AccountPage({
       </div>
 
       {/* Signed in */}
-      <div className="text-right text-sm px-6">
+      <div className="text-right text-base px-6">
         Signed in as{" "}
         <span className="font-semibold">
           {application?.applicantName || "User"}
@@ -101,134 +101,334 @@ export default function AccountPage({
       </div>
 
       {/* Main content */}
-      <main className="px-6 mt-6 max-w-6xl mx-auto">
-        <h1 className="text-2xl font-bold mb-4 border-b-2 border-red-700 inline-block">
-          {application?.applicantName || "User"}'s account
-        </h1>
+      <main className="px-6 mt-6 max-w-6xl mx-auto text-lg">
+        <div className="border-b-2 border-red-700 mb-4">
+          <h1 className="text-4xl font-bold">
+            {application?.applicantName || "User"}'s account
+          </h1>
+        </div>
 
         {/* Applications section */}
-        <h2 className="text-xl font-semibold mt-6 mb-2">
+        <h2 className="text-2xl font-semibold mt-6 mb-2">
           View the applications you submitted
         </h2>
-        <p className="text-sm mb-4">
+        <p className="text-base mb-4">
           Review, check the status, or read messages about your submitted
           application.
         </p>
-
         {loading ? (
           <p>Loading application data...</p>
         ) : application ? (
-          <div className="overflow-x-auto border border-gray-300 mb-6">
-            <table className="w-full text-sm border-collapse">
-              <thead className="bg-gray-100 border-b border-gray-300 text-left">
-                <tr>
-                  <th className="px-3 py-2 font-semibold">Application type</th>
-                  <th className="px-3 py-2 font-semibold">Application number</th>
-                  <th className="px-3 py-2 font-semibold">Applicant name</th>
-                  <th className="px-3 py-2 font-semibold">Date submitted</th>
-                  <th className="px-3 py-2 font-semibold">Current status</th>
-                  <th className="px-3 py-2 font-semibold">Messages</th>
-                  <th className="px-3 py-2 font-semibold">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="px-3 py-2">{application.applicationType}</td>
-                  <td className="px-3 py-2">{application.applicationNumber}</td>
-                  <td className="px-3 py-2">{application.applicantName}</td>
-                  <td className="px-3 py-2">
-                    {new Date(application.dateOfSubmission).toLocaleDateString(
-                      "en-US",
-                      { month: "long", day: "numeric", year: "numeric" }
-                    )}
-                  </td>
-                  <td className="px-3 py-2">{application.status || "Submitted"}</td>
-                  <td className="px-3 py-2">{messages.length > 0 ? "New" : "None"}</td>
-                  <td className="px-3 py-2">
-                    <a
-                      href={`/profile/${id}`}
-                      className="text-blue-700 underline"
-                    >
-                      Check full application status
-                    </a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="mb-6 p-4 bg-white">
+            {/* Top controls */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2 text-base text-gray-700">
+              {/* Left: search + entries */}
+              <div className="flex items-center gap-6 mb-2 md:mb-0">
+                <div className="flex items-center gap-2">
+                  <label htmlFor="search" className="font-medium">
+                    Search:
+                  </label>
+                  <input
+                    id="search"
+                    type="text"
+                    className="border border-gray-300 rounded px-2 py-1 text-base"
+                  />
+                </div>
+                <div className="text-base text-gray-600">
+                  Showing 1 to 1 of 1 entries
+                </div>
+                <div className="flex items-center gap-2">
+                  <span>Show</span>
+                  <select className="border border-gray-300 rounded px-2 py-1 text-base">
+                    <option>5</option>
+                    <option>10</option>
+                    <option>25</option>
+                  </select>
+                  <span>entries</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-base border-collapse">
+                <thead>
+                  <tr>
+                    {[
+                      "Application type",
+                      "Application number",
+                      "Applicant name",
+                      "Date submitted",
+                      "Current status",
+                      "Messages",
+                      "Action",
+                    ].map((header) => {
+                      const [firstWord, ...rest] = header.split(" ");
+                      return (
+                        <th
+                          key={header}
+                          className="px-3 py-2 font-semibold text-left bg-white cursor-pointer align-top"
+                          onClick={(e) => {
+                            // reset all headers
+                            const headers = e.currentTarget.parentElement?.children;
+                            if (headers) {
+                              Array.from(headers).forEach((h) =>
+                                h.classList.remove("bg-gray-200")
+                              );
+                            }
+                            // set clicked header
+                            e.currentTarget.classList.add("bg-gray-200");
+                          }}
+                        >
+                          <div className="flex flex-col leading-tight">
+                            {/* First line: first word */}
+                            <span className="font-bold">{firstWord}</span>
+
+                            {/* Second line: rest of the header + arrow */}
+                            <span className="text-sm">
+                              {rest.join(" ")}{" "}
+                              <span className="text-gray-400">⇅</span>
+                            </span>
+                          </div>
+                        </th>
+                      );
+                    })}
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Main row */}
+                  <tr className="bg-gray-100">
+                    <td className="px-3 py-2 whitespace-nowrap">
+                      {application.applicationType}
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap">
+                      {application.applicationNumber}
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap">
+                      {application.applicantName}
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap">
+                      {new Date(
+                        application.dateOfSubmission
+                      ).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap">
+                      {application.status || "Submitted"}
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap">
+                      {messages.length > 0 ? "New" : "None"}
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap">
+                      <a
+                        href={`/profile/${id}`}
+                        className="text-blue-700 hover:underline"
+                      >
+                        Check full application status
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ) : (
+          <p>No application data found.</p>
+        )}
+        <div className="flex justify-center mb-10">
+          <button className="px-5 py-2 text-xl bg-blue-600 text-white rounded-lg transition-colors duration-200 hover:bg-gray-500">
+            1
+          </button>
+        </div>
+
+        <p className="mt-6 text-gray-700 text-lg leading-relaxed">
+          Did you apply on paper or don&apos;t see your online application in
+          your account?{" "}
+          <a href="#" className="text-blue-600 hover:underline font-medium">
+            Add your application to your account
+          </a>
+          <br />
+          to access it and check your status online.
+        </p>
+
+        {/* Messages Table */}
+        <h2 className="my-5 text-2xl font-semibold mb-2">
+          Continue an application you haven't submitted
+        </h2>
+        <p className="text-base text-gray-800">
+          Continue working on an application or profile you haven't submitted or
+          delete it from your account.
+        </p>
+        {loading ? (
+          <p>Loading application data...</p>
+        ) : application ? (
+          <div className="mb-6 p-4 bg-white">
+            {/* Top controls */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2 text-base text-gray-700">
+              {/* Left: search + entries */}
+              <div className="flex items-center gap-6 mb-2 md:mb-0">
+                <div className="flex items-center gap-2">
+                  <label htmlFor="search" className="font-medium">
+                    Search:
+                  </label>
+                  <input
+                    id="search"
+                    type="text"
+                    className="border border-gray-300 rounded px-2 py-1 text-base"
+                  />
+                </div>
+                <div className="text-base text-gray-600">
+                  Showing 1 to 1 of 1 entries
+                </div>
+                <div className="flex items-center gap-2">
+                  <span>Show</span>
+                  <select className="border border-gray-300 rounded px-2 py-1 text-base">
+                    <option>5</option>
+                    <option>10</option>
+                    <option>25</option>
+                  </select>
+                  <span>entries</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-base border-collapse">
+                <thead>
+                  <tr>
+                    {[
+                      "Application type",
+                      "Date Created",
+                      "Days left to submit",
+                      "Date last saved",
+                      "Action",
+                    ].map((header) => {
+                      const [firstWord, ...rest] = header.split(" ");
+                      return (
+                        <th
+                          key={header}
+                          className="px-3 py-2 font-semibold text-left bg-white cursor-pointer align-top"
+                          onClick={(e) => {
+                            // reset all headers
+                            const headers = e.currentTarget.parentElement?.children;
+                            if (headers) {
+                              Array.from(headers).forEach((h) =>
+                                h.classList.remove("bg-gray-200")
+                              );
+                            }
+                            // set clicked header
+                            e.currentTarget.classList.add("bg-gray-200");
+                          }}
+                        >
+                          <div className="flex flex-col leading-tight">
+                            {/* First line: first word */}
+                            <span className="font-bold">{firstWord}</span>
+
+                            {/* Second line: rest of the header + arrow */}
+                            <span className="text-sm">
+                              {rest.join(" ")}{" "}
+                              <span className="text-gray-400">⇅</span>
+                            </span>
+                          </div>
+                        </th>
+                      );
+                    })}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="bg-gray-100">
+                    <td colSpan={5} className="text-center py-4 text-gray-600">
+                      No data available
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         ) : (
           <p>No application data found.</p>
         )}
 
-        {/* Messages Table */}
-        <h2 className="text-xl font-semibold mb-2">
-          Messages about your application
-        </h2>
-        <p className="text-sm text-gray-800">
-          ℹ️ Links and document titles are shown in the language you chose for
-          your portal account when they were generated.
-        </p>
-        <p className="mt-2 text-sm">({messages.length} New message(s))</p>
-
-        <div className="flex flex-wrap justify-between items-center mt-4 mb-2 text-sm">
-          <div>
-            Search:{" "}
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="border border-gray-400 rounded px-2 py-1 ml-1 text-sm"
-            />
-          </div>
-        </div>
-
-        <div className="overflow-x-auto border border-gray-300 mb-6">
-          <table className="w-full text-sm border-collapse">
-            <thead className="bg-gray-100 border-b border-gray-300 text-left">
-              <tr>
-                <th className="px-3 py-2 font-semibold">Subject</th>
-                <th className="px-3 py-2 font-semibold">Date sent</th>
-                <th className="px-3 py-2 font-semibold">Date read</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredMessages.length > 0 ? (
-                filteredMessages.map((msg, idx) => (
-                  <tr
-                    key={idx}
-                    className="border-b border-gray-200 hover:bg-gray-50"
-                  >
-                    <td className="px-3 py-2 text-blue-700 underline">
-                      {msg.subject}
-                    </td>
-                    <td className="px-3 py-2">{msg.dateSent}</td>
-                    <td className="px-3 py-2">{msg.dateRead}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={3}
-                    className="text-center py-4 text-gray-600"
-                  >
-                    No messages found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
         {/* Pagination */}
         <div className="flex justify-center mb-10">
-          <button className="px-3 py-1 bg-blue-600 text-white rounded">
+          <button className="px-5 py-2 text-xl bg-blue-600 text-white rounded-lg transition-colors duration-200 hover:bg-gray-500">
             1
           </button>
         </div>
 
+        <div className="px-6 py-10 max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8">Start an application</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Column 1 */}
+            <div>
+              <a
+                href="#"
+                className="text-blue-800 font-semibold underline block mb-2 text-lg"
+              >
+                Apply to come to Canada
+              </a>
+              <p className="text-base">
+                Includes applications for visitor visas, work and study permits,
+                Express Entry and International Experience Canada. You will need
+                your personal reference code if you have one.
+              </p>
+              <p className="mt-4 font-semibold text-base">
+                Note: <span className="font-bold">You must</span> apply through
+                this portal (IRCC secure account) if you're applying with a
+                family member who needs a work permit.
+              </p>
+            </div>
+
+            {/* Column 2 */}
+            <div>
+              <a
+                href="#"
+                className="text-blue-800 font-semibold underline block mb-2 text-lg"
+              >
+                Refugees: Apply for temporary health care benefits
+              </a>
+              <p className="text-base">
+                Use this application if you are a protected person or refugee
+                claimant who wants to apply for the Interim Federal Health
+                Program.
+              </p>
+            </div>
+
+            {/* Column 3 */}
+            <div>
+              <a
+                href="#"
+                className="text-blue-800 font-semibold underline block mb-2 text-lg"
+              >
+                Citizenship: Apply for a search or proof of citizenship
+              </a>
+              <p className="text-base">
+                Use this application to apply for proof of citizenship
+                (citizenship certificate) or to search citizenship records.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <h2 className="text-4xl font-bold mb-2">Account messages</h2>
+        <p className="text-lg text-gray-700 mb-4">
+          Read messages related to your account. Messages about a submitted
+          application are on your application status page.
+        </p>
+        <p className="text-base text-gray-600">You have no messages.</p>
+
         {/* Report Problem */}
         <div className="mt-4">
-          <button className="border border-gray-400 px-3 py-1 rounded text-sm hover:bg-gray-100">
+          <button
+            className="border border-gray-300 px-4 py-2 rounded text-base 
+                     bg-gray-100 text-blue-600 
+                     hover:bg-gray-300 hover:text-blue-700 
+                     active:bg-gray-400"
+          >
             Report a problem or mistake on this page
           </button>
         </div>
@@ -236,12 +436,13 @@ export default function AccountPage({
 
       {/* Footer */}
       <footer className="mt-12">
-        <div className="px-4 sm:px-8 py-3 text-sm text-gray-600">
+        <div className="px-4 sm:px-8 py-3 text-base text-gray-600">
           Date modified: <span className="font-medium">{lastModified}</span>
         </div>
+
         <div className="bg-[#26374a] text-white py-8">
           <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4 sm:px-8">
-            <div className="space-y-2">
+            <div className="space-y-2 text-base">
               <a href="#" className="block hover:underline">
                 Contact us
               </a>
@@ -252,7 +453,7 @@ export default function AccountPage({
                 Public service and military
               </a>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 text-base">
               <a href="#" className="block hover:underline">
                 News
               </a>
@@ -263,7 +464,7 @@ export default function AccountPage({
                 Government-wide reporting
               </a>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 text-base">
               <a href="#" className="block hover:underline">
                 Prime Minister
               </a>
@@ -276,30 +477,37 @@ export default function AccountPage({
             </div>
           </div>
         </div>
+
+        {/* Bottom bar */}
         <div className="bg-gray-100 py-6">
-          <div className="max-w-6xl mx-auto px-4 sm:px-8 text-center text-sm text-gray-700 space-x-4">
-            <a href="#" className="hover:underline">
-              Social media
-            </a>
-            <span>•</span>
-            <a href="#" className="hover:underline">
-              Mobile applications
-            </a>
-            <span>•</span>
-            <a href="#" className="hover:underline">
-              About Canada.ca
-            </a>
-            <span>•</span>
-            <a href="#" className="hover:underline">
-              Terms and conditions
-            </a>
-            <span>•</span>
-            <a href="#" className="hover:underline">
-              Privacy
-            </a>
-          </div>
-          <div className="mt-6 flex justify-center">
-            <Image src="/footer.svg" alt="Canada Logo" width={150} height={40} />
+          <div className="max-w-6xl mx-auto px-4 sm:px-8 flex items-center justify-between text-base text-gray-700">
+            {/* Left: Links */}
+            <div className="space-x-4">
+              <a href="#" className="hover:underline">
+                Social media
+              </a>
+              <span>•</span>
+              <a href="#" className="hover:underline">
+                Mobile applications
+              </a>
+              <span>•</span>
+              <a href="#" className="hover:underline">
+                About Canada.ca
+              </a>
+              <span>•</span>
+              <a href="#" className="hover:underline">
+                Terms and conditions
+              </a>
+              <span>•</span>
+              <a href="#" className="hover:underline">
+                Privacy
+              </a>
+            </div>
+
+            {/* Right: Logo */}
+            <div>
+              <Image src="/footer.svg" alt="Canada Logo" width={180} height={50} />
+            </div>
           </div>
         </div>
       </footer>
