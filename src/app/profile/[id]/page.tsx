@@ -4,6 +4,8 @@ import Image from "next/image";
 import { fetchApplicationByIdAction } from "@/actions/applicationActions";
 import Header from "@/app/header";
 import { logoutApplicationAction } from "@/actions/authActions";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+
 
 export default function Home({
   params,
@@ -90,12 +92,12 @@ export default function Home({
         </button>
       </div>
       <div className="mb-4 px-6">
-  <div className="border-b-2 border-red-700 w-full pb-2">
-    <h1 className="text-4xl font-bold pt-6">
-      Application status and messages
-    </h1>
-  </div>
-</div>
+        <div className="border-b-2 border-red-700 w-full pb-2">
+          <h1 className="text-4xl font-bold pt-6">
+            Application status and messages
+          </h1>
+        </div>
+      </div>
 
 
       {/* Match content with heading alignment */}
@@ -124,14 +126,13 @@ export default function Home({
 
 
       {/* Application + Applicant info */}
-      <div className="flex gap-6 px-6 mt-4">
-
+      <div className="flex gap-6 px-6 mt-4 items-start flex-wrap">
         {/* Application status */}
-        <div className="border border-gray-300 rounded bg-white w-fit max-w-full">
+        <div className="border border-gray-300 rounded bg-white flex-1 min-w-[420px] max-w-[600px]">
           <h2 className="bg-gray-100 px-5 py-3 font-semibold text-xl">
             Application status
           </h2>
-          <div className="p-5 text-lg leading-relaxed max-w-2xl">
+          <div className="p-5 text-lg leading-relaxed">
             <p>
               We are processing your application. We will send you a message
               when there is an update or if we need more information from you.
@@ -151,11 +152,11 @@ export default function Home({
         </div>
 
         {/* Applicant info */}
-        <div className="border border-gray-300 rounded bg-white min-w-[420px]">
+        <div className="border border-gray-300 rounded bg-white flex-1 min-w-[420px] max-w-[600px]">
           <h2 className="bg-gray-100 px-5 py-3 font-semibold text-xl">
             Applicant information
           </h2>
-          <div className="p-5 text-lg space-y-3 max-w-2xl leading-relaxed">
+          <div className="p-5 text-lg space-y-3 leading-relaxed">
             <p>
               <strong>Principal Applicant:</strong>{" "}
               {applicationData?.applicantName || "Loading..."}
@@ -218,121 +219,121 @@ export default function Home({
             </ul>
           </div>
         </div>
-
       </div>
+
 
 
       {/* Details about application */}
-    <div className="mt-8 px-6">
-  <h2 className="text-4xl font-semibold mb-3">
-    Details about your application status
-  </h2>
-  <p className="text-base mb-6 leading-relaxed">
-    When we get your application, there are a series of steps it may go through before we make a decision. Use the following table to find out the current status of each application step.
-  </p>
+      <div className="mt-8 px-6">
+        <h2 className="text-4xl font-semibold mb-3">
+          Details about your application status
+        </h2>
+        <p className="text-base mb-6 leading-relaxed">
+          When we get your application, there are a series of steps it may go through before we make a decision. Use the following table to find out the current status of each application step.
+        </p>
 
-  <ul className="space-y-6 text-[17px] leading-relaxed">
-    <li className="flex items-start gap-3">
-      <span>📑</span>
-      <div>
-        <div className="flex items-center gap-1 font-bold">
-          <span>Review of eligibility</span>
-          <span className="text-blue-900">❓</span>
-        </div>
-        <ul className="list-disc ml-5 mt-1">
-          <li>We are reviewing whether you meet the eligibility requirements.</li>
-        </ul>
-      </div>
-    </li>
+        <ul className="space-y-6 text-[17px] leading-relaxed">
+          <li className="flex items-start gap-3">
+            <Image src="/icons/img1.png" alt="Eligibility" width={28} height={28} className="object-contain" />
+            <div>
+              <div className="flex items-center gap-1 font-bold">
+                <span>Review of eligibility</span>
+                <i className="fa fa-lg fa-question-circle text-blue-900" aria-hidden="true"></i>
+              </div>
+              <ul className="list-disc ml-5 mt-1">
+                <li>We are reviewing whether you meet the eligibility requirements.</li>
+              </ul>
+            </div>
+          </li>
 
-    <li className="flex items-start gap-3">
-      <span>🧾</span>
-      <div>
-        <div className="flex items-center gap-1 font-bold">
-          <span>Review of medical results</span>
-          <span className="text-blue-900">❓</span>
-        </div>
-        <ul className="list-disc ml-5 mt-1">
-          <li>You do not need a medical exam. We will send you a message if this changes.</li>
-        </ul>
-      </div>
-    </li>
+          <li className="flex items-start gap-3">
+            <Image src="/icons/img2.png" alt="Medical" width={28} height={28} className="object-contain" />
+            <div>
+              <div className="flex items-center gap-1 font-bold">
+                <span>Review of medical results</span>
+                <i className="fa fa-lg fa-question-circle text-blue-900" aria-hidden="true"></i>
+              </div>
+              <ul className="list-disc ml-5 mt-1">
+                <li>You do not need a medical exam. We will send you a message if this changes.</li>
+              </ul>
+            </div>
+          </li>
 
-    <li className="flex items-start gap-3">
-      <span>📂</span>
-      <div>
-        <div className="flex items-center gap-1 font-bold">
-          <span>Review of additional documents</span>
-          <span className="text-blue-900">❓</span>
-        </div>
-        <ul className="list-disc ml-5 mt-1">
-          <li>We do not need additional documents.</li>
-        </ul>
-      </div>
-    </li>
+          <li className="flex items-start gap-3">
+            <Image src="/icons/img3.png" alt="Documents" width={28} height={28} className="object-contain" />
+            <div>
+              <div className="flex items-center gap-1 font-bold">
+                <span>Review of additional documents</span>
+                <i className="fa fa-lg fa-question-circle text-blue-900" aria-hidden="true"></i>
+              </div>
+              <ul className="list-disc ml-5 mt-1">
+                <li>We do not need additional documents.</li>
+              </ul>
+            </div>
+          </li>
 
-    <li className="flex items-start gap-3">
-      <span>👥</span>
-      <div>
-        <div className="flex items-center gap-1 font-bold">
-          <span>Interview</span>
-          <span className="text-blue-900">❓</span>
-        </div>
-        <ul className="list-disc ml-5 mt-1">
-          <li>You do not need an interview. We will send you a message if this changes.</li>
-        </ul>
-      </div>
-    </li>
+          <li className="flex items-start gap-3">
+            <Image src="/icons/img4.png" alt="Interview" width={28} height={28} className="object-contain" />
+            <div>
+              <div className="flex items-center gap-1 font-bold">
+                <span>Interview</span>
+                <i className="fa fa-lg fa-question-circle text-blue-900" aria-hidden="true"></i>
+              </div>
+              <ul className="list-disc ml-5 mt-1">
+                <li>You do not need an interview. We will send you a message if this changes.</li>
+              </ul>
+            </div>
+          </li>
 
-    <li className="flex items-start gap-3">
-      <span>🖐</span>
-      <div>
-        <div className="flex items-center gap-1 font-bold">
-          <span>Biometrics</span>
-          <span className="text-blue-900">❓</span>
-        </div>
-        <ul className="list-disc ml-5 mt-1">
-          <li>
-            {applicationData?.biometrics?.enrolmentDate
-              ? new Date(applicationData.biometrics.enrolmentDate).toLocaleDateString("en-US", {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                })
-              : "Pending"}{" "}
-            {applicationData?.biometrics?.status || ""}
+          <li className="flex items-start gap-3">
+            <Image src="/icons/img5.png" alt="Biometrics" width={28} height={28} className="object-contain" />
+            <div>
+              <div className="flex items-center gap-1 font-bold">
+                <span>Biometrics</span>
+                <i className="fa fa-lg fa-question-circle text-blue-900" aria-hidden="true"></i>
+              </div>
+              <ul className="list-disc ml-5 mt-1">
+                <li>
+                  {applicationData?.biometrics?.enrolmentDate
+                    ? new Date(applicationData.biometrics.enrolmentDate).toLocaleDateString("en-US", {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    })
+                    : "Pending"}{" "}
+                  {applicationData?.biometrics?.status || ""}
+                </li>
+              </ul>
+            </div>
+          </li>
+
+          <li className="flex items-start gap-3">
+            <Image src="/icons/img6.png" alt="Background Check" width={28} height={28} className="object-contain" />
+            <div>
+              <div className="flex items-center gap-1 font-bold">
+                <span>Background check</span>
+                <i className="fa fa-lg fa-question-circle text-blue-900" aria-hidden="true"></i>
+              </div>
+              <ul className="list-disc ml-5 mt-1">
+                <li>May 24, 2025 Completed</li>
+              </ul>
+            </div>
+          </li>
+
+          <li className="flex items-start gap-3">
+            <Image src="/icons/img7.png" alt="Final Decision" width={28} height={28} className="object-contain" />
+            <div>
+              <div className="flex items-center gap-1 font-bold">
+                <span>Final decision</span>
+                <i className="fa fa-lg fa-question-circle text-blue-900" aria-hidden="true"></i>
+              </div>
+              <ul className="list-disc ml-5 mt-1">
+                <li>Your application is in progress. We will send you a message once the final decision has been made.</li>
+              </ul>
+            </div>
           </li>
         </ul>
       </div>
-    </li>
-
-    <li className="flex items-start gap-3">
-      <span>🔍</span>
-      <div>
-        <div className="flex items-center gap-1 font-bold">
-          <span>Background check</span>
-          <span className="text-blue-900">❓</span>
-        </div>
-        <ul className="list-disc ml-5 mt-1">
-          <li>We are processing your background check. We will send you a message if we need more information.</li>
-        </ul>
-      </div>
-    </li>
-
-    <li className="flex items-start gap-3">
-      <span>⚖️</span>
-      <div>
-        <div className="flex items-center gap-1 font-bold">
-          <span>Final decision</span>
-          <span className="text-blue-900">❓</span>
-        </div>
-        <ul className="list-disc ml-5 mt-1">
-          <li>Your application is in progress. We will send you a message once the final decision has been made.</li>
-        </ul>
-      </div>
-    </li>
-  </ul>
-</div>
 
 
 
