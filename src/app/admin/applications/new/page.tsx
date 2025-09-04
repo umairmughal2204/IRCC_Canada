@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useActionState } from "react"; // adjust if using a different hook
+import { useActionState } from "react";
 import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -229,16 +229,20 @@ export default function ApplicationForm() {
 
             {/* UCI */}
             <div className="space-y-2">
-              <Label htmlFor="uci">Unique Client Identifier (UCI)</Label>
+              <Label htmlFor="uniqueClientIdentifier">
+                Unique Client Identifier (UCI)
+              </Label>
               <Input
-                id="uci"
-                name="uci"
+                id="uniqueClientIdentifier"
+                name="uniqueClientIdentifier"
                 required
                 className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
                 placeholder="Enter UCI"
               />
-              {errorFor("uci") && (
-                <p className="text-sm text-red-500">{errorFor("uci")}</p>
+              {errorFor("uniqueClientIdentifier") && (
+                <p className="text-sm text-red-500">
+                  {errorFor("uniqueClientIdentifier")}
+                </p>
               )}
             </div>
 
@@ -248,9 +252,15 @@ export default function ApplicationForm() {
               <Input
                 id="biometricsNumber"
                 name="biometricsNumber"
+                required
                 className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
                 placeholder="Enter biometrics number"
               />
+              {errorFor("biometrics.number") && (
+                <p className="text-sm text-red-500">
+                  {errorFor("biometrics.number")}
+                </p>
+              )}
               {errorFor("biometricsNumber") && (
                 <p className="text-sm text-red-500">
                   {errorFor("biometricsNumber")}
@@ -266,8 +276,14 @@ export default function ApplicationForm() {
                 id="dateOfBiometrics"
                 name="dateOfBiometrics"
                 type="date"
+                required
                 className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
               />
+              {errorFor("biometrics.enrolmentDate") && (
+                <p className="text-sm text-red-500">
+                  {errorFor("biometrics.enrolmentDate")}
+                </p>
+              )}
               {errorFor("dateOfBiometrics") && (
                 <p className="text-sm text-red-500">
                   {errorFor("dateOfBiometrics")}
@@ -281,18 +297,24 @@ export default function ApplicationForm() {
                 id="expiryDate"
                 name="expiryDate"
                 type="date"
+                required
                 className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
               />
+              {errorFor("biometrics.expiryDate") && (
+                <p className="text-sm text-red-500">
+                  {errorFor("biometrics.expiryDate")}
+                </p>
+              )}
               {errorFor("expiryDate") && (
                 <p className="text-sm text-red-500">{errorFor("expiryDate")}</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="biometricStatus">Status of Biometrics</Label>
+              <Label htmlFor="biometricsStatus">Status of Biometrics</Label>
               <select
-                id="biometricStatus"
-                name="biometricStatus"
+                id="biometricsStatus"
+                name="biometricsStatus"
                 className="w-full rounded-md border-none shadow-sm bg-gray-50 dark:bg-gray-700 p-2"
                 defaultValue={BiometricsStatus.Completed}
               >
@@ -302,12 +324,120 @@ export default function ApplicationForm() {
                   </option>
                 ))}
               </select>
-              {errorFor("biometricStatus") && (
+              {errorFor("biometrics.status") && (
                 <p className="text-sm text-red-500">
-                  {errorFor("biometricStatus")}
+                  {errorFor("biometrics.status")}
+                </p>
+              )}
+              {errorFor("biometricsStatus") && (
+                <p className="text-sm text-red-500">
+                  {errorFor("biometricsStatus")}
                 </p>
               )}
             </div>
+
+            {/* ---------------- New 7 Fields ---------------- */}
+            <div className="space-y-2">
+              <Label htmlFor="reviewOfEligibility">Review of Eligibility</Label>
+              <Input
+                id="reviewOfEligibility"
+                name="reviewOfEligibility"
+                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
+                placeholder="Enter review of eligibility"
+              />
+              {errorFor("reviewOfEligibility") && (
+                <p className="text-sm text-red-500">
+                  {errorFor("reviewOfEligibility")}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="medical">Medical</Label>
+              <Input
+                id="medical"
+                name="medical"
+                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
+                placeholder="Enter medical status"
+              />
+              {errorFor("medical") && (
+                <p className="text-sm text-red-500">{errorFor("medical")}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="documents">Documents</Label>
+              <Input
+                id="documents"
+                name="documents"
+                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
+                placeholder="Enter documents status"
+              />
+              {errorFor("documents") && (
+                <p className="text-sm text-red-500">{errorFor("documents")}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="interview">Interview</Label>
+              <Input
+                id="interview"
+                name="interview"
+                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
+                placeholder="Enter interview status"
+              />
+              {errorFor("interview") && (
+                <p className="text-sm text-red-500">{errorFor("interview")}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="biometricsStatusText">
+                Biometrics Status Text
+              </Label>
+              <Input
+                id="biometricsStatusText"
+                name="biometricsStatusText"
+                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
+                placeholder="Enter biometrics status text"
+              />
+              {errorFor("biometricsStatusText") && (
+                <p className="text-sm text-red-500">
+                  {errorFor("biometricsStatusText")}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="backgroundCheck">Background Check</Label>
+              <Input
+                id="backgroundCheck"
+                name="backgroundCheck"
+                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
+                placeholder="Enter background check status"
+              />
+              {errorFor("backgroundCheck") && (
+                <p className="text-sm text-red-500">
+                  {errorFor("backgroundCheck")}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="finalDecision">Final Decision</Label>
+              <Input
+                id="finalDecision"
+                name="finalDecision"
+                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
+                placeholder="Enter final decision"
+              />
+              {errorFor("finalDecision") && (
+                <p className="text-sm text-red-500">
+                  {errorFor("finalDecision")}
+                </p>
+              )}
+            </div>
+            {/* ---------------- End New Fields ---------------- */}
 
             {/* General Error */}
             {"message" in (formState.error ?? {}) && (

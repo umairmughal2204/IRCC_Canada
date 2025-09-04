@@ -241,7 +241,7 @@ export default function Home({
                 <i className="fa fa-lg fa-question-circle text-blue-900" aria-hidden="true"></i>
               </div>
               <ul className="list-disc ml-5 mt-1">
-                <li>We are reviewing whether you meet the eligibility requirements.</li>
+                <li>{applicationData?.reviewOfEligibility || "N/A"}</li>
               </ul>
             </div>
           </li>
@@ -254,7 +254,7 @@ export default function Home({
                 <i className="fa fa-lg fa-question-circle text-blue-900" aria-hidden="true"></i>
               </div>
               <ul className="list-disc ml-5 mt-1">
-                <li>You do not need a medical exam. We will send you a message if this changes.</li>
+                <li>{applicationData?.medical || "N/A"}</li>
               </ul>
             </div>
           </li>
@@ -267,7 +267,7 @@ export default function Home({
                 <i className="fa fa-lg fa-question-circle text-blue-900" aria-hidden="true"></i>
               </div>
               <ul className="list-disc ml-5 mt-1">
-                <li>We do not need additional documents.</li>
+                <li>{applicationData?.documents || "N/A"}</li>
               </ul>
             </div>
           </li>
@@ -280,7 +280,7 @@ export default function Home({
                 <i className="fa fa-lg fa-question-circle text-blue-900" aria-hidden="true"></i>
               </div>
               <ul className="list-disc ml-5 mt-1">
-                <li>You do not need an interview. We will send you a message if this changes.</li>
+                <li>{applicationData?.interview || "N/A"}</li>
               </ul>
             </div>
           </li>
@@ -293,16 +293,7 @@ export default function Home({
                 <i className="fa fa-lg fa-question-circle text-blue-900" aria-hidden="true"></i>
               </div>
               <ul className="list-disc ml-5 mt-1">
-                <li>
-                  {applicationData?.biometrics?.enrolmentDate
-                    ? new Date(applicationData.biometrics.enrolmentDate).toLocaleDateString("en-US", {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
-                    })
-                    : "Pending"}{" "}
-                  {applicationData?.biometrics?.status || ""}
-                </li>
+                <li>{applicationData?.biometricsStatusText || "N/A"}</li>
               </ul>
             </div>
           </li>
@@ -315,7 +306,7 @@ export default function Home({
                 <i className="fa fa-lg fa-question-circle text-blue-900" aria-hidden="true"></i>
               </div>
               <ul className="list-disc ml-5 mt-1">
-                <li>May 24, 2025 Completed</li>
+                <li>{applicationData?.backgroundCheck || "N/A"}</li>
               </ul>
             </div>
           </li>
@@ -328,17 +319,12 @@ export default function Home({
                 <i className="fa fa-lg fa-question-circle text-blue-900" aria-hidden="true"></i>
               </div>
               <ul className="list-disc ml-5 mt-1">
-                <li>Your application is in progress. We will send you a message once the final decision has been made.</li>
+                <li>{applicationData?.finalDecision || "N/A"}</li>
               </ul>
             </div>
           </li>
         </ul>
       </div>
-
-
-
-
-
 
 
       {/* Messages about application (UPDATED) */}

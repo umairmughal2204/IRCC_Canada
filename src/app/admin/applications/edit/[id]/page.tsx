@@ -143,8 +143,6 @@ export default function EditApplicationForm() {
                 name="userName"
                 required
                 defaultValue={application.userName}
-                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
-                placeholder="Enter user name"
               />
               {errorFor("userName") && (
                 <p className="text-sm text-red-500">{errorFor("userName")}</p>
@@ -160,8 +158,6 @@ export default function EditApplicationForm() {
                 type="password"
                 required
                 defaultValue={application.password}
-                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
-                placeholder="Enter password"
               />
               {errorFor("password") && (
                 <p className="text-sm text-red-500">{errorFor("password")}</p>
@@ -177,8 +173,6 @@ export default function EditApplicationForm() {
                 type="email"
                 required
                 defaultValue={application.email}
-                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
-                placeholder="Enter applicant email"
               />
               {errorFor("email") && (
                 <p className="text-sm text-red-500">{errorFor("email")}</p>
@@ -193,8 +187,6 @@ export default function EditApplicationForm() {
                 name="applicationType"
                 required
                 defaultValue={application.applicationType}
-                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
-                placeholder="Type of application"
               />
               {errorFor("applicationType") && (
                 <p className="text-sm text-red-500">
@@ -211,8 +203,6 @@ export default function EditApplicationForm() {
                 name="applicationNumber"
                 required
                 defaultValue={application.applicationNumber}
-                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
-                placeholder="Enter application number"
               />
               {errorFor("applicationNumber") && (
                 <p className="text-sm text-red-500">
@@ -223,16 +213,12 @@ export default function EditApplicationForm() {
 
             {/* Applicant Name */}
             <div className="space-y-2">
-              <Label htmlFor="applicantName">
-                Applicant Name / Principal Applicant
-              </Label>
+              <Label htmlFor="applicantName">Applicant Name</Label>
               <Input
                 id="applicantName"
                 name="applicantName"
                 required
                 defaultValue={application.applicantName}
-                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
-                placeholder="Enter applicant name"
               />
               {errorFor("applicantName") && (
                 <p className="text-sm text-red-500">
@@ -248,26 +234,18 @@ export default function EditApplicationForm() {
                 id="dateOfSubmission"
                 name="dateOfSubmission"
                 type="date"
-                required
                 defaultValue={application.dateOfSubmission}
-                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
               />
-              {errorFor("dateOfSubmission") && (
-                <p className="text-sm text-red-500">
-                  {errorFor("dateOfSubmission")}
-                </p>
-              )}
             </div>
 
             {/* Status */}
             <div className="space-y-2">
-              <Label htmlFor="status">Status of Application</Label>
+              <Label htmlFor="status">Status</Label>
               <select
                 id="status"
                 name="status"
-                className="w-full rounded-md border-none shadow-sm bg-gray-50 dark:bg-gray-700 p-2"
-                required
                 defaultValue={application.status}
+                className="w-full p-2 rounded-md"
               >
                 {Object.values(ApplicationStatus).map((s) => (
                   <option key={s} value={s}>
@@ -275,25 +253,83 @@ export default function EditApplicationForm() {
                   </option>
                 ))}
               </select>
-              {errorFor("status") && (
-                <p className="text-sm text-red-500">{errorFor("status")}</p>
-              )}
+            </div>
+
+            {/* NEW FIELDS */}
+            <div className="space-y-2">
+              <Label htmlFor="reviewOfEligibility">Review of Eligibility</Label>
+              <Textarea
+                id="reviewOfEligibility"
+                name="reviewOfEligibility"
+                defaultValue={application.reviewOfEligibility}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="medical">Medical</Label>
+              <Textarea
+                id="medical"
+                name="medical"
+                defaultValue={application.medical}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="documents">Documents</Label>
+              <Textarea
+                id="documents"
+                name="documents"
+                defaultValue={application.documents}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="interview">Interview</Label>
+              <Textarea
+                id="interview"
+                name="interview"
+                defaultValue={application.interview}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="biometricsStatusText">
+                Biometrics Status Text
+              </Label>
+              <Textarea
+                id="biometricsStatusText"
+                name="biometricsStatusText"
+                defaultValue={application.biometricsStatusText}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="backgroundCheck">Background Check</Label>
+              <Textarea
+                id="backgroundCheck"
+                name="backgroundCheck"
+                defaultValue={application.backgroundCheck}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="finalDecision">Final Decision</Label>
+              <Textarea
+                id="finalDecision"
+                name="finalDecision"
+                defaultValue={application.finalDecision}
+              />
             </div>
 
             {/* Messages */}
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="messages">Messages</Label>
               <Textarea
                 id="messages"
                 name="messages"
-                rows={3}
                 defaultValue={application.messages}
-                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
               />
-              {errorFor("messages") && (
-                <p className="text-sm text-red-500">{errorFor("messages")}</p>
-              )}
-            </div>
+            </div> */}
 
             {/* UCI */}
             <div className="space-y-2">
@@ -301,13 +337,8 @@ export default function EditApplicationForm() {
               <Input
                 id="uci"
                 name="uci"
-                required
                 defaultValue={application.uniqueClientIdentifier}
-                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
               />
-              {errorFor("uci") && (
-                <p className="text-sm text-red-500">{errorFor("uci")}</p>
-              )}
             </div>
 
             {/* Biometrics */}
@@ -317,13 +348,7 @@ export default function EditApplicationForm() {
                 id="biometricsNumber"
                 name="biometricsNumber"
                 defaultValue={application.biometrics?.number}
-                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
               />
-              {errorFor("biometricsNumber") && (
-                <p className="text-sm text-red-500">
-                  {errorFor("biometricsNumber")}
-                </p>
-              )}
             </div>
 
             <div className="space-y-2">
@@ -335,13 +360,7 @@ export default function EditApplicationForm() {
                 name="dateOfBiometrics"
                 type="date"
                 defaultValue={application.biometrics?.enrolmentDate}
-                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
               />
-              {errorFor("dateOfBiometrics") && (
-                <p className="text-sm text-red-500">
-                  {errorFor("dateOfBiometrics")}
-                </p>
-              )}
             </div>
 
             <div className="space-y-2">
@@ -351,11 +370,7 @@ export default function EditApplicationForm() {
                 name="expiryDate"
                 type="date"
                 defaultValue={application.biometrics?.expiryDate}
-                className="border-none shadow-sm bg-gray-50 dark:bg-gray-700"
               />
-              {errorFor("expiryDate") && (
-                <p className="text-sm text-red-500">{errorFor("expiryDate")}</p>
-              )}
             </div>
 
             <div className="space-y-2">
@@ -363,8 +378,8 @@ export default function EditApplicationForm() {
               <select
                 id="biometricStatus"
                 name="biometricStatus"
-                className="w-full rounded-md border-none shadow-sm bg-gray-50 dark:bg-gray-700 p-2"
                 defaultValue={application.biometrics?.status}
+                className="w-full p-2 rounded-md"
               >
                 {Object.values(BiometricsStatus).map((s) => (
                   <option key={s} value={s}>
@@ -372,25 +387,12 @@ export default function EditApplicationForm() {
                   </option>
                 ))}
               </select>
-              {errorFor("biometricStatus") && (
-                <p className="text-sm text-red-500">
-                  {errorFor("biometricStatus")}
-                </p>
-              )}
             </div>
 
-            {/* General Error */}
-            {"message" in (formState.error ?? {}) && (
-              <p className="text-sm text-red-500">
-                {(formState.error as any).message?.[0]}
-              </p>
-            )}
-
-            <CardFooter className="flex justify-end border-none">
+            {/* Submit */}
+            <CardFooter className="flex justify-end">
               <Button type="submit" disabled={isPending}>
-                {isPending && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
+                {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isPending ? "Saving..." : "Update Application"}
               </Button>
             </CardFooter>

@@ -1,5 +1,7 @@
 import { fetchApplicationByIdAction } from "@/actions/applicationActions"
 import { notFound } from "next/navigation"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 interface ApplicationType {
   _id: any
@@ -18,6 +20,13 @@ interface ApplicationType {
     expiryDate?: string
     status?: string
   }
+  reviewOfEligibility?: string
+  medical?: string
+  documents?: string
+  interview?: string
+  biometricsStatusText?: string
+  backgroundCheck?: string
+  finalDecision?: string
   messages?: string[] | string
   createdAt?: string
   updatedAt?: string
@@ -37,9 +46,15 @@ export default async function ApplicationViewPage({
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white shadow rounded-lg dark:bg-gray-800">
-      <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-        View Application
-      </h2>
+      {/* Header with Back Button */}
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          View Application
+        </h2>
+        <Link href="/admin/applications">
+          <Button variant="secondary">Back to Applications</Button>
+        </Link>
+      </div>
 
       <div className="space-y-4">
         {/* User Name */}
@@ -124,6 +139,64 @@ export default async function ApplicationViewPage({
           >
             {application.status || "N/A"}
           </span>
+        </div>
+
+        {/* --- New Fields --- */}
+        <div>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Review of Eligibility
+          </p>
+          <p className="text-gray-700 dark:text-gray-300">
+            {application.reviewOfEligibility || "N/A"}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Medical</p>
+          <p className="text-gray-700 dark:text-gray-300">
+            {application.medical || "N/A"}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Documents</p>
+          <p className="text-gray-700 dark:text-gray-300">
+            {application.documents || "N/A"}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Interview</p>
+          <p className="text-gray-700 dark:text-gray-300">
+            {application.interview || "N/A"}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Biometrics Status Text
+          </p>
+          <p className="text-gray-700 dark:text-gray-300">
+            {application.biometricsStatusText || "N/A"}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Background Check
+          </p>
+          <p className="text-gray-700 dark:text-gray-300">
+            {application.backgroundCheck || "N/A"}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Final Decision
+          </p>
+          <p className="text-gray-700 dark:text-gray-300">
+            {application.finalDecision || "N/A"}
+          </p>
         </div>
 
         {/* Messages */}

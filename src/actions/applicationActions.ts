@@ -15,7 +15,7 @@ import {
   deleteSecurityQuestion,
   getSecurityQuestions,
   verifySecurityAnswer,
-} from "@/functions/applicationFuntions";
+} from "@/functions/applicationFuntions"; // keep your existing path
 import { ApplicationStatus, BiometricsStatus } from "@/models/Application";
 
 // ================= SCHEMAS =================
@@ -37,7 +37,17 @@ const applicationSchema = z.object({
   dateOfSubmission: z.coerce.date(),
   status: z.nativeEnum(ApplicationStatus).optional(),
   uniqueClientIdentifier: z.string().trim().min(2, "UCI is required"),
+
   biometrics: biometricsSchema,
+
+  // ✅ New fields
+  reviewOfEligibility: z.string().trim().optional(),
+  medical: z.string().trim().optional(),
+  documents: z.string().trim().optional(),
+  interview: z.string().trim().optional(),
+  biometricsStatusText: z.string().trim().optional(),
+  backgroundCheck: z.string().trim().optional(),
+  finalDecision: z.string().trim().optional(),
 });
 
 const messageSchema = z.object({
@@ -49,10 +59,6 @@ const securityQuestionSchema = z.object({
   answer: z.string().trim().min(2, "Answer is required"),
 });
 
-type ApplicationFormData = z.infer<typeof applicationSchema>;
-type MessageData = z.infer<typeof messageSchema>;
-type SecurityQuestionData = z.infer<typeof securityQuestionSchema>;
-
 export type ApplicationFormState = {
   error?: Record<string, string[]> | { message?: string[] };
   data?: any;
@@ -62,14 +68,12 @@ export type ApplicationFormState = {
 
 function serializeMongoDoc(doc: any): any {
   if (!doc) return doc;
-
   if (Array.isArray(doc)) return doc.map(serializeMongoDoc);
 
   if (typeof doc === "object") {
     const result: any = {};
     for (const key in doc) {
       if (!Object.hasOwn(doc, key)) continue;
-
       const value = doc[key];
 
       if (value?._bsontype === "ObjectID") {
@@ -90,23 +94,51 @@ function serializeMongoDoc(doc: any): any {
 
 // ================= HELPER: Parse FormData =================
 
+function str(formData: FormData, key: string) {
+  const v = formData.get(key);
+  return (v == null ? "" : String(v)).trim();
+}
+
+function emptyToUndefined<T extends string>(v: string): T | undefined {
+  return v === "" ? undefined : (v as T);
+}
+
 function parseApplicationFormData(formData: FormData): Record<string, any> {
+  // Back-compat: accept both names if they exist in older forms
+  const uci =
+    str(formData, "uniqueClientIdentifier") || str(formData, "uci");
+
+  const biomStatusRaw =
+    str(formData, "biometricsStatus") || str(formData, "biometricStatus"); // handle both
+
+  const appStatusRaw = str(formData, "status");
+
   return {
-    userName: formData.get("userName") || "",
-    password: formData.get("password") || "",
-    email: formData.get("email") || "",
-    applicationType: formData.get("applicationType") || "",
-    applicationNumber: formData.get("applicationNumber") || "",
-    applicantName: formData.get("applicantName") || "",
-    dateOfSubmission: formData.get("dateOfSubmission") || "",
-    status: formData.get("status") || "",
-    uniqueClientIdentifier: formData.get("uci") || "",
+    userName: str(formData, "userName"),
+    password: str(formData, "password"),
+    email: str(formData, "email"),
+    applicationType: str(formData, "applicationType"),
+    applicationNumber: str(formData, "applicationNumber"),
+    applicantName: str(formData, "applicantName"),
+    dateOfSubmission: str(formData, "dateOfSubmission"),
+    status: emptyToUndefined<ApplicationStatus>(appStatusRaw),
+    uniqueClientIdentifier: uci,
+
     biometrics: {
-      number: formData.get("biometricsNumber") || "",
-      enrolmentDate: formData.get("dateOfBiometrics") || "",
-      expiryDate: formData.get("expiryDate") || "",
-      status: formData.get("biometricStatus") || "",
+      number: str(formData, "biometricsNumber"),
+      enrolmentDate: str(formData, "dateOfBiometrics"),
+      expiryDate: str(formData, "expiryDate"),
+      status: emptyToUndefined<BiometricsStatus>(biomStatusRaw),
     },
+
+    // ✅ New fields
+    reviewOfEligibility: str(formData, "reviewOfEligibility"),
+    medical: str(formData, "medical"),
+    documents: str(formData, "documents"),
+    interview: str(formData, "interview"),
+    biometricsStatusText: str(formData, "biometricsStatusText"),
+    backgroundCheck: str(formData, "backgroundCheck"),
+    finalDecision: str(formData, "finalDecision"),
   };
 }
 
@@ -120,13 +152,25 @@ export async function createApplicationAction(
   const parsed = parseApplicationFormData(formData);
   const result = applicationSchema.safeParse(parsed);
 
-  if (!result.success) return { error: result.error.flatten().fieldErrors };
+  if (!result.success) {
+    return { error: result.error.flatten().fieldErrors };
+  }
 
   try {
     const application = await createApplication(result.data);
     return { data: serializeMongoDoc(application) };
   } catch (error: any) {
-    return { error: { message: [error.message || "Failed to create application"] } };
+    // Handle duplicate key errors nicely (email, applicationNumber)
+    if (error?.code === 11000 && error?.keyPattern) {
+      const fieldErrors: Record<string, string[]> = {};
+      for (const key of Object.keys(error.keyPattern)) {
+        fieldErrors[key] = [`${key} must be unique`];
+      }
+      return { error: fieldErrors };
+    }
+    return {
+      error: { message: [error?.message || "Failed to create application"] },
+    };
   }
 }
 
@@ -139,13 +183,24 @@ export async function updateApplicationAction(
   const parsed = parseApplicationFormData(formData);
   const result = applicationSchema.safeParse(parsed);
 
-  if (!result.success) return { error: result.error.flatten().fieldErrors };
+  if (!result.success) {
+    return { error: result.error.flatten().fieldErrors };
+  }
 
   try {
     const updated = await updateApplication(id, result.data);
     return { data: serializeMongoDoc(updated) };
   } catch (error: any) {
-    return { error: { message: [error.message || "Failed to update application"] } };
+    if (error?.code === 11000 && error?.keyPattern) {
+      const fieldErrors: Record<string, string[]> = {};
+      for (const key of Object.keys(error.keyPattern)) {
+        fieldErrors[key] = [`${key} must be unique`];
+      }
+      return { error: fieldErrors };
+    }
+    return {
+      error: { message: [error?.message || "Failed to update application"] },
+    };
   }
 }
 
@@ -155,7 +210,7 @@ export async function deleteApplicationAction(id: string) {
     const deleted = await deleteApplication(id);
     return { data: serializeMongoDoc(deleted) };
   } catch (error: any) {
-    return { error: { message: [error.message || "Failed to delete application"] } };
+    return { error: { message: [error?.message || "Failed to delete application"] } };
   }
 }
 
@@ -165,7 +220,7 @@ export async function fetchAllApplicationsAction() {
     const applications = await getAllApplications();
     return { data: serializeMongoDoc(applications) };
   } catch (error: any) {
-    return { error: { message: [error.message || "Failed to fetch applications"] } };
+    return { error: { message: [error?.message || "Failed to fetch applications"] } };
   }
 }
 
@@ -176,7 +231,7 @@ export async function fetchApplicationByIdAction(id: string) {
     if (!application) return { error: { message: ["Application not found"] } };
     return { data: serializeMongoDoc(application) };
   } catch (error: any) {
-    return { error: { message: [error.message || "Failed to fetch application"] } };
+    return { error: { message: [error?.message || "Failed to fetch application"] } };
   }
 }
 
@@ -188,7 +243,7 @@ export async function addMessageAction(
   formData: FormData
 ): Promise<ApplicationFormState> {
   await connectToDatabase();
-  const parsed = { content: formData.get("content") || "" };
+  const parsed = { content: str(formData, "content") };
   const result = messageSchema.safeParse(parsed);
   if (!result.success) return { error: result.error.flatten().fieldErrors };
 
@@ -196,7 +251,7 @@ export async function addMessageAction(
     const updated = await addMessageToApplication(id, result.data);
     return { data: serializeMongoDoc(updated) };
   } catch (error: any) {
-    return { error: { message: [error.message || "Failed to add message"] } };
+    return { error: { message: [error?.message || "Failed to add message"] } };
   }
 }
 
@@ -206,7 +261,7 @@ export async function markMessagesReadAction(id: string) {
     const updated = await markMessagesRead(id);
     return { data: serializeMongoDoc(updated) };
   } catch (error: any) {
-    return { error: { message: [error.message || "Failed to mark messages read"] } };
+    return { error: { message: [error?.message || "Failed to mark messages read"] } };
   }
 }
 
@@ -218,7 +273,10 @@ export async function addSecurityQuestionAction(
   formData: FormData
 ): Promise<ApplicationFormState> {
   await connectToDatabase();
-  const parsed = { question: formData.get("question") || "", answer: formData.get("answer") || "" };
+  const parsed = {
+    question: str(formData, "question"),
+    answer: str(formData, "answer"),
+  };
   const result = securityQuestionSchema.safeParse(parsed);
   if (!result.success) return { error: result.error.flatten().fieldErrors };
 
@@ -226,7 +284,7 @@ export async function addSecurityQuestionAction(
     const updated = await addSecurityQuestion(id, result.data.question, result.data.answer);
     return { data: serializeMongoDoc(updated) };
   } catch (error: any) {
-    return { error: { message: [error.message || "Failed to add security question"] } };
+    return { error: { message: [error?.message || "Failed to add security question"] } };
   }
 }
 
@@ -237,23 +295,22 @@ export async function updateSecurityQuestionAction(
 ): Promise<ApplicationFormState> {
   await connectToDatabase();
   const parsed = {
-    questionId: formData.get("questionId") || "",
-    newAnswer: formData.get("newAnswer") || "",
+    questionId: str(formData, "questionId"),
+    newAnswer: str(formData, "newAnswer"),
   };
 
-  const result = z
-    .object({
-      questionId: z.string().trim().min(1, "Question ID is required"),
-      newAnswer: z.string().trim().min(2, "Answer is required"),
-    })
-    .safeParse(parsed);
+  const result = z.object({
+    questionId: z.string().trim().min(1, "Question ID is required"),
+    newAnswer: z.string().trim().min(2, "Answer is required"),
+  }).safeParse(parsed);
+
   if (!result.success) return { error: result.error.flatten().fieldErrors };
 
   try {
     const updated = await updateSecurityQuestion(id, result.data.questionId, result.data.newAnswer);
     return { data: serializeMongoDoc(updated) };
   } catch (error: any) {
-    return { error: { message: [error.message || "Failed to update security question"] } };
+    return { error: { message: [error?.message || "Failed to update security question"] } };
   }
 }
 
@@ -263,7 +320,7 @@ export async function deleteSecurityQuestionAction(id: string, questionId: strin
     const updated = await deleteSecurityQuestion(id, questionId);
     return { data: serializeMongoDoc(updated) };
   } catch (error: any) {
-    return { error: { message: [error.message || "Failed to delete security question"] } };
+    return { error: { message: [error?.message || "Failed to delete security question"] } };
   }
 }
 
@@ -271,16 +328,13 @@ export async function fetchSecurityQuestionsAction(id: string) {
   await connectToDatabase();
   try {
     const questions = await getSecurityQuestions(id);
-
-    // convert _id to string explicitly
     const serializedQuestions = questions.map((q: any) => ({
       _id: q._id.toString(),
       question: q.question,
     }));
-
     return { data: serializedQuestions };
   } catch (error: any) {
-    return { error: { message: [error.message || "Failed to fetch security questions"] } };
+    return { error: { message: [error?.message || "Failed to fetch security questions"] } };
   }
 }
 
@@ -290,19 +344,22 @@ export async function verifySecurityAnswerAction(
   formData: FormData
 ): Promise<ApplicationFormState> {
   await connectToDatabase();
-  const parsed = { questionId: formData.get("questionId") || "", answer: formData.get("answer") || "" };
-  const result = z
-    .object({
-      questionId: z.string().trim().min(1, "Question ID is required"),
-      answer: z.string().trim().min(2, "Answer is required"),
-    })
-    .safeParse(parsed);
+  const parsed = {
+    questionId: str(formData, "questionId"),
+    answer: str(formData, "answer"),
+  };
+
+  const result = z.object({
+    questionId: z.string().trim().min(1, "Question ID is required"),
+    answer: z.string().trim().min(2, "Answer is required"),
+  }).safeParse(parsed);
+
   if (!result.success) return { error: result.error.flatten().fieldErrors };
 
   try {
     const isValid = await verifySecurityAnswer(id, result.data.questionId, result.data.answer);
     return { data: isValid };
   } catch (error: any) {
-    return { error: { message: [error.message || "Failed to verify security answer"] } };
+    return { error: { message: [error?.message || "Failed to verify security answer"] } };
   }
 }

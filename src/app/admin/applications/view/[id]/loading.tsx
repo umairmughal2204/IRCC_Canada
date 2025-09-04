@@ -5,21 +5,12 @@ export default function ApplicationViewLoading() {
       <div className="h-8 w-60 bg-gray-300 rounded mb-8 dark:bg-gray-700"></div>
 
       {/* Application details */}
-      {[...Array(8)].map((_, i) => (
+      {[...Array(15)].map((_, i) => (
         <div key={i} className="mb-6">
           {/* Label */}
           <div className="h-4 w-40 bg-gray-300 rounded mb-2 dark:bg-gray-700"></div>
           {/* Value */}
           <div className="h-6 w-full max-w-lg bg-gray-300 rounded dark:bg-gray-700"></div>
-        </div>
-      ))}
-
-      {/* Biometrics section */}
-      <div className="mt-10 mb-4 h-6 w-48 bg-gray-300 rounded dark:bg-gray-700"></div>
-      {[...Array(3)].map((_, i) => (
-        <div key={i} className="mb-6">
-          <div className="h-4 w-32 bg-gray-300 rounded mb-2 dark:bg-gray-700"></div>
-          <div className="h-6 w-full max-w-md bg-gray-300 rounded dark:bg-gray-700"></div>
         </div>
       ))}
 

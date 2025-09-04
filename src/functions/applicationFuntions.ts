@@ -19,6 +19,15 @@ const sanitizeApplicationData = (data: {
     expiryDate: Date;
     status?: BiometricsStatus;
   };
+
+  // ✅ New fields
+  reviewOfEligibility?: string;
+  medical?: string;
+  documents?: string;
+  interview?: string;
+  biometricsStatusText?: string;
+  backgroundCheck?: string;
+  finalDecision?: string;
 }) => ({
   userName: data.userName.trim(),
   password: data.password, // ⚠️ should be hashed before save
@@ -35,6 +44,15 @@ const sanitizeApplicationData = (data: {
     expiryDate: data.biometrics.expiryDate,
     status: data.biometrics.status || BiometricsStatus.NotCompleted,
   },
+
+  // ✅ New fields
+  reviewOfEligibility: data.reviewOfEligibility?.trim() || "",
+  medical: data.medical?.trim() || "",
+  documents: data.documents?.trim() || "",
+  interview: data.interview?.trim() || "",
+  biometricsStatusText: data.biometricsStatusText?.trim() || "",
+  backgroundCheck: data.backgroundCheck?.trim() || "",
+  finalDecision: data.finalDecision?.trim() || "",
 });
 
 /**
@@ -55,6 +73,16 @@ const serializeApplication = (application: any) => ({
     enrolmentDate: application.biometrics?.enrolmentDate?.toISOString?.(),
     expiryDate: application.biometrics?.expiryDate?.toISOString?.(),
   },
+
+  // ✅ New fields
+  reviewOfEligibility: application.reviewOfEligibility,
+  medical: application.medical,
+  documents: application.documents,
+  interview: application.interview,
+  biometricsStatusText: application.biometricsStatusText,
+  backgroundCheck: application.backgroundCheck,
+  finalDecision: application.finalDecision,
+
   messages: application.messages?.map((msg: any) => ({
     content: msg.content,
     sentAt: msg.sentAt?.toISOString?.(),
@@ -71,23 +99,7 @@ const serializeApplication = (application: any) => ({
 /**
  * Create a new application
  */
-export const createApplication = async (data: {
-  userName: string;
-  password: string;
-  email: string;
-  applicationType: string;
-  applicationNumber: string;
-  applicantName: string;
-  dateOfSubmission: Date;
-  status?: ApplicationStatus;
-  uniqueClientIdentifier: string;
-  biometrics: {
-    number: string;
-    enrolmentDate: Date;
-    expiryDate: Date;
-    status?: BiometricsStatus;
-  };
-}) => {
+export const createApplication = async (data: any) => {
   const appData = sanitizeApplicationData(data);
   const application = await new Application(appData).save();
   return serializeApplication(application);
@@ -112,26 +124,7 @@ export const getApplicationById = async (id: string) => {
 /**
  * Update application by ID
  */
-export const updateApplication = async (
-  id: string,
-  data: {
-    userName: string;
-    password: string;
-    email: string;
-    applicationType: string;
-    applicationNumber: string;
-    applicantName: string;
-    dateOfSubmission: Date;
-    status?: ApplicationStatus;
-    uniqueClientIdentifier: string;
-    biometrics: {
-      number: string;
-      enrolmentDate: Date;
-      expiryDate: Date;
-      status?: BiometricsStatus;
-    };
-  }
-) => {
+export const updateApplication = async (id: string, data: any) => {
   const updatedData = sanitizeApplicationData(data);
   const application = await Application.findByIdAndUpdate(
     id,
