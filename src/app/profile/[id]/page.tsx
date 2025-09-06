@@ -6,7 +6,6 @@ import Header from "@/app/header";
 import { logoutApplicationAction } from "@/actions/authActions";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
-
 export default function Home({
   params,
 }: {
@@ -17,6 +16,8 @@ export default function Home({
   const [applicationData, setApplicationData] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(5);
 
   // Fetch application by ID on mount
   useEffect(() => {
@@ -30,20 +31,20 @@ export default function Home({
     fetchData();
   }, [id]);
 
-  const filtered = messages.filter((msg) =>
+  // Filtered messages based on search
+  const filteredMessages = messages.filter((msg) =>
     msg.subject?.toLowerCase().includes(search.toLowerCase())
   );
-  const lastModified = applicationData?.lastModified
-    ? new Date(applicationData.lastModified).toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    })
-    : new Date().toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
+
+  // Pagination calculations
+  const indexOfLastMessage = currentPage * entriesPerPage;
+  const indexOfFirstMessage = indexOfLastMessage - entriesPerPage;
+  const currentMessages = filteredMessages.slice(
+    indexOfFirstMessage,
+    indexOfLastMessage
+  );
+  const totalPages = Math.ceil(filteredMessages.length / entriesPerPage);
+
   const handleLogout = async () => {
     try {
       await logoutApplicationAction(); // Call server action
@@ -52,6 +53,18 @@ export default function Home({
       console.error("Logout failed", err);
     }
   };
+
+  const lastModified = applicationData?.lastModified
+    ? new Date(applicationData.lastModified).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+    : new Date().toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
 
   return (
     <div className="bg-white text-black font-sans min-h-screen">
@@ -99,31 +112,26 @@ export default function Home({
         </div>
       </div>
 
-
       {/* Match content with heading alignment */}
       <div className="pl-10 pr-6 py-6">
         <p className="text-lg flex items-center whitespace-nowrap">
-          Check the status, review the details and read messages for your application.
+          Check the status, review the details and read messages for your
+          application.
           <a href="#" className="text-blue-800 underline ml-2">
             View submitted application or upload documents
           </a>
         </p>
 
-
-
         <div className="border-l-4 border-black pl-5 mt-6 w-fit pr-6 py-3">
           <p className="text-lg">
-            You have 0{" "}
+            You have{" "}
+            {messages.filter((msg) => !msg.read).length}{" "}
             <a href="#" className="text-blue-800 underline">
               unread message(s).
             </a>
           </p>
         </div>
-
       </div>
-
-
-
 
       {/* Application + Applicant info */}
       <div className="flex gap-6 px-6 mt-4 items-start flex-wrap">
@@ -141,10 +149,13 @@ export default function Home({
               Latest update: <br />
               Biometrics -{" "}
               {applicationData?.biometrics?.enrolmentDate
-                ? new Date(applicationData.biometrics.enrolmentDate).toLocaleDateString(
-                  "en-US",
-                  { month: "long", day: "numeric", year: "numeric" }
-                )
+                ? new Date(
+                    applicationData.biometrics.enrolmentDate
+                  ).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })
                 : "N/A"}{" "}
               : {applicationData?.biometrics?.status || "Pending"}.
             </p>
@@ -172,14 +183,13 @@ export default function Home({
             <p>
               <strong>Date Received:</strong>{" "}
               {applicationData?.dateOfSubmission
-                ? new Date(applicationData.dateOfSubmission).toLocaleDateString(
-                  "en-US",
-                  {
+                ? new Date(
+                    applicationData.dateOfSubmission
+                  ).toLocaleDateString("en-US", {
                     month: "long",
                     day: "numeric",
                     year: "numeric",
-                  }
-                )
+                  })
                 : "Loading..."}
             </p>
             <p>
@@ -193,35 +203,31 @@ export default function Home({
               <li>
                 <strong>Date of Biometrics Enrolment:</strong>{" "}
                 {applicationData?.biometrics?.enrolmentDate
-                  ? new Date(applicationData.biometrics.enrolmentDate).toLocaleDateString(
-                    "en-US",
-                    {
+                  ? new Date(
+                      applicationData.biometrics.enrolmentDate
+                    ).toLocaleDateString("en-US", {
                       month: "long",
                       day: "numeric",
                       year: "numeric",
-                    }
-                  )
+                    })
                   : "Loading..."}
               </li>
               <li>
                 <strong>Expiry Date:</strong>{" "}
                 {applicationData?.biometrics?.expiryDate
-                  ? new Date(applicationData.biometrics.expiryDate).toLocaleDateString(
-                    "en-US",
-                    {
+                  ? new Date(
+                      applicationData.biometrics.expiryDate
+                    ).toLocaleDateString("en-US", {
                       month: "long",
                       day: "numeric",
                       year: "numeric",
-                    }
-                  )
+                    })
                   : "Loading..."}
               </li>
             </ul>
           </div>
         </div>
       </div>
-
-
 
       {/* Details about application */}
       <div className="mt-8 px-6">
@@ -326,8 +332,7 @@ export default function Home({
         </ul>
       </div>
 
-
-      {/* Messages about application (UPDATED) */}
+      {/* ===================== Messages Section ===================== */}
       <div className="mt-10 px-6">
         <h2 className="text-4xl font-semibold mb-4">
           Messages about your application
@@ -337,17 +342,17 @@ export default function Home({
             <span className="text-white font-bold text-sm">i</span>
           </div>
           <p className="truncate">
-            Links and document titles are shown in the language you chose for your portal account when they were generated.
+            Links and document titles are shown in the language you chose for
+            your portal account when they were generated.
           </p>
         </div>
         <p className="mt-3 text-lg text-gray-700">
-          ({messages.length} New message{messages.length !== 1 ? "s" : ""})
+          ({filteredMessages.length} New message
+          {filteredMessages.length !== 1 ? "s" : ""})
         </p>
 
-
-
-
-        <div className="flex items-center gap-6 mb-2 md:mb-0">
+        {/* Filters */}
+        <div className="flex items-center gap-6 mb-2 md:mb-0 mt-4">
           <div className="flex items-center gap-2">
             <label htmlFor="search" className="font-medium">
               Search:
@@ -356,14 +361,28 @@ export default function Home({
               id="search"
               type="text"
               className="border border-gray-300 rounded px-2 py-1 text-base"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(1); // Reset page on search
+              }}
             />
           </div>
           <div className="text-base text-gray-600">
-            Showing 1 to 1 of 1 entries
+            Showing {indexOfFirstMessage + 1} to{" "}
+            {Math.min(indexOfLastMessage, filteredMessages.length)} of{" "}
+            {filteredMessages.length} entries
           </div>
           <div className="flex items-center gap-2">
             <span>Show</span>
-            <select className="border border-gray-300 rounded px-2 py-1 text-base">
+            <select
+              className="border border-gray-300 rounded px-2 py-1 text-base"
+              value={entriesPerPage}
+              onChange={(e) => {
+                setEntriesPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+            >
               <option>5</option>
               <option>10</option>
               <option>25</option>
@@ -371,7 +390,6 @@ export default function Home({
             <span>entries</span>
           </div>
         </div>
-
 
         {/* Table */}
         <table className="min-w-full border border-gray-300 text-left my-4">
@@ -389,40 +407,64 @@ export default function Home({
             </tr>
           </thead>
           <tbody>
-            <tr className="border border-gray-300 hover:bg-gray-50">
-              <td className="px-4 py-2 border border-gray-300 text-blue-700 underline cursor-pointer">
-                Biometrics Collection Letter
-              </td>
-              <td className="px-4 py-2 border border-gray-300">June 27, 2025</td>
-              <td className="px-4 py-2 border border-gray-300">June 27, 2025</td>
-            </tr>
-            <tr className="border border-gray-300 hover:bg-gray-50">
-              <td className="px-4 py-2 border border-gray-300 text-blue-700 underline cursor-pointer">
-                Confirmation of Online Application Transmission
-              </td>
-              <td className="px-4 py-2 border border-gray-300">June 25, 2025</td>
-              <td className="px-4 py-2 border border-gray-300">New Message</td>
-            </tr>
-            <tr className="border border-gray-300 hover:bg-gray-50">
-              <td className="px-4 py-2 border border-gray-300 text-blue-700 underline cursor-pointer">
-                Submission Confirmation
-              </td>
-              <td className="px-4 py-2 border border-gray-300">June 25, 2025</td>
-              <td className="px-4 py-2 border border-gray-300">June 25, 2025</td>
-            </tr>
+            {currentMessages.length > 0 ? (
+              currentMessages.map((msg, index) => (
+                <tr
+                  key={index}
+                  className="border border-gray-300 hover:bg-gray-50"
+                >
+                  <td className="px-4 py-2 border border-gray-300 text-blue-700 underline cursor-pointer">
+                    {msg.subject || "N/A"}
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    {msg.sentAt
+                      ? new Date(msg.sentAt).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })
+                      : "N/A"}
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    {msg.readAt
+                      ? new Date(msg.readAt).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })
+                      : "New Message"}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={3}
+                  className="text-center px-4 py-2 border border-gray-300"
+                >
+                  No messages found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
 
-
-
-
         {/* Pagination */}
-        <div className="flex justify-center mb-10">
-          <button className="px-5 py-2 text-xl bg-blue-600 text-white rounded-lg transition-colors duration-200 hover:bg-gray-500">
-            1
-          </button>
+        <div className="flex justify-center gap-2 mb-10">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+            <button
+              key={num}
+              className={`px-5 py-2 text-xl rounded-lg transition-colors duration-200 ${
+                num === currentPage
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+              onClick={() => setCurrentPage(num)}
+            >
+              {num}
+            </button>
+          ))}
         </div>
-
 
         {/* Report Problem */}
         <div className="mt-4">

@@ -47,7 +47,7 @@ import {
 
 interface IMessage {
   _id: string;
-  content: string;
+  subject: string;
   sentAt: string;
   readAt?: string | null;
 }
@@ -64,7 +64,7 @@ export default function MessagesPage() {
   const [editing, setEditing] = useState<IMessage | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [form, setForm] = useState({
-    content: "",
+    subject: "",
     sentAt: "",
     readAt: "",
   });
@@ -79,7 +79,7 @@ export default function MessagesPage() {
         setMessages(
           result.data.map((m: any) => ({
             _id: String(m._id),
-            content: m.content || "",
+            subject: m.subject || "",
             sentAt: m.sentAt || new Date().toISOString(),
             readAt: m.readAt || null,
           }))
@@ -103,15 +103,15 @@ export default function MessagesPage() {
 
   // Save or update
   const handleSave = async () => {
-    if (!form.content.trim()) {
-      toast({ title: "Validation Error", description: "Message cannot be empty", variant: "destructive" });
+    if (!form.subject.trim()) {
+      toast({ title: "Validation Error", description: "Subject cannot be empty", variant: "destructive" });
       return;
     }
 
     setSaving(true);
     try {
       const fd = new FormData();
-      fd.set("content", form.content);
+      fd.set("subject", form.subject);
       if (form.sentAt) fd.set("sentAt", form.sentAt);
       if (form.readAt) fd.set("readAt", form.readAt);
 
@@ -124,7 +124,7 @@ export default function MessagesPage() {
           toast({ title: "Success", description: "Message updated!" });
           setDialogOpen(false);
           setEditing(null);
-          setForm({ content: "", sentAt: "", readAt: "" });
+          setForm({ subject: "", sentAt: "", readAt: "" });
           await loadMessages();
         }
       } else {
@@ -134,7 +134,7 @@ export default function MessagesPage() {
         } else {
           toast({ title: "Success", description: "Message added!" });
           setDialogOpen(false);
-          setForm({ content: "", sentAt: "", readAt: "" });
+          setForm({ subject: "", sentAt: "", readAt: "" });
           await loadMessages();
         }
       }
@@ -161,7 +161,7 @@ export default function MessagesPage() {
   };
 
   // Filter + pagination
-  const filtered = messages.filter(m => m.content.toLowerCase().includes(search.toLowerCase()));
+  const filtered = messages.filter(m => m.subject.toLowerCase().includes(search.toLowerCase()));
   const totalPages = Math.ceil(filtered.length / pageSize);
   const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
@@ -177,7 +177,7 @@ export default function MessagesPage() {
             className="sm:w-64"
           />
           <Button
-            onClick={() => { setEditing(null); setForm({ content: "", sentAt: "", readAt: "" }); setDialogOpen(true); }}
+            onClick={() => { setEditing(null); setForm({ subject: "", sentAt: "", readAt: "" }); setDialogOpen(true); }}
           >
             <Plus className="h-4 w-4 mr-1" /> Add Message
           </Button>
@@ -195,7 +195,7 @@ export default function MessagesPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Content</TableHead>
+                    <TableHead>Subject</TableHead>
                     <TableHead>Sent At</TableHead>
                     <TableHead>Read At</TableHead>
                     <TableHead className="w-[140px] text-right">Actions</TableHead>
@@ -204,7 +204,7 @@ export default function MessagesPage() {
                 <TableBody>
                   {paginated.length ? paginated.map((m, i) => (
                     <TableRow key={`${m._id}-${i}`}>
-                      <TableCell className="font-medium">{m.content}</TableCell>
+                      <TableCell className="font-medium">{m.subject}</TableCell>
                       <TableCell>{m.sentAt ? new Date(m.sentAt).toLocaleString() : "-"}</TableCell>
                       <TableCell>{m.readAt ? new Date(m.readAt).toLocaleString() : "-"}</TableCell>
                       <TableCell>
@@ -212,7 +212,7 @@ export default function MessagesPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => { setEditing(m); setForm({ content: m.content, sentAt: m.sentAt || "", readAt: m.readAt || "" }); setDialogOpen(true); }}
+                            onClick={() => { setEditing(m); setForm({ subject: m.subject, sentAt: m.sentAt || "", readAt: m.readAt || "" }); setDialogOpen(true); }}
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -276,11 +276,11 @@ export default function MessagesPage() {
 
           <div className="space-y-4">
             <div>
-              <Label htmlFor="content">Message</Label>
+              <Label htmlFor="subject">Subject</Label>
               <Input
-                id="content"
-                value={form.content}
-                onChange={(e) => setForm({ ...form, content: e.target.value })}
+                id="subject"
+                value={form.subject}
+                onChange={(e) => setForm({ ...form, subject: e.target.value })}
               />
             </div>
             <div>

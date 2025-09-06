@@ -86,7 +86,7 @@ const serializeApplication = (application: any) => ({
   // ✅ Updated messages
   messages: application.messages?.map((msg: any) => ({
     _id: msg._id?.toString(),
-    content: msg.content,
+    subject: msg.subject, // ✅ renamed
     sentAt: msg.sentAt?.toISOString?.(),
     readAt: msg.readAt ? msg.readAt.toISOString() : null,
   })),
@@ -144,14 +144,14 @@ export const deleteApplication = async (id: string) => {
  */
 export const addMessageToApplication = async (
   id: string,
-  message: { content: string; sentAt?: Date; readAt?: Date | null }
+  message: { subject: string; sentAt?: Date; readAt?: Date | null }
 ) => {
   const application = await Application.findByIdAndUpdate(
     id,
     {
       $push: {
         messages: {
-          content: message.content,
+          subject: message.subject, // ✅ renamed
           sentAt: message.sentAt ?? new Date(),
           readAt: message.readAt ?? null,
         },
@@ -174,7 +174,7 @@ export const getMessages = async (id: string) => {
   return application
     ? application.messages?.map((msg: any) => ({
         _id: msg._id?.toString(),
-        content: msg.content,
+        subject: msg.subject, // ✅ renamed
         sentAt: msg.sentAt?.toISOString?.(),
         readAt: msg.readAt ? msg.readAt.toISOString?.() : null,
       }))
@@ -182,16 +182,16 @@ export const getMessages = async (id: string) => {
 };
 
 /**
- * Update a message (content, sentAt, readAt)
+ * Update a message (subject, sentAt, readAt)
  */
 export const updateMessage = async (
   id: string,
   messageId: string,
-  updateData: { content?: string; sentAt?: Date; readAt?: Date | null }
+  updateData: { subject?: string; sentAt?: Date; readAt?: Date | null }
 ) => {
   const updateFields: any = {};
 
-  if (updateData.content !== undefined) updateFields["messages.$.content"] = updateData.content;
+  if (updateData.subject !== undefined) updateFields["messages.$.subject"] = updateData.subject; // ✅ renamed
   if (updateData.sentAt !== undefined) updateFields["messages.$.sentAt"] = updateData.sentAt;
   if (updateData.readAt !== undefined) updateFields["messages.$.readAt"] = updateData.readAt;
 
@@ -250,7 +250,6 @@ export const deleteMessage = async (id: string, messageId: string) => {
 
   return application ? serializeApplication(application) : null;
 };
-
 
 /**
  * ================= SECURITY QUESTIONS CRUD =================

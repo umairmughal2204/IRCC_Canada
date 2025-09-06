@@ -55,14 +55,14 @@ const applicationSchema = z.object({
 });
 
 const messageSchema = z.object({
-  content: z.string().trim().min(1, "Message cannot be empty"),
+  subject: z.string().trim().min(1, "Subject cannot be empty"),
   sentAt: z.coerce.date().optional(),
   readAt: z.coerce.date().optional().nullable(),
 });
 
 const updateMessageSchema = z.object({
   messageId: z.string().trim().min(1, "Message ID is required"),
-  content: z.string().trim().min(1).optional(),
+  subject: z.string().trim().min(1).optional(),
   sentAt: z.coerce.date().optional(),
   readAt: z.coerce.date().optional().nullable(),
 });
@@ -224,7 +224,7 @@ export async function addMessageAction(
 ): Promise<ApplicationFormState> {
   await connectToDatabase();
   const parsed = {
-    content: str(formData, "content"),
+    subject: str(formData, "subject"),
     sentAt: formData.get("sentAt") || undefined,
     readAt: formData.get("readAt") || undefined,
   };
@@ -258,7 +258,7 @@ export async function updateMessageAction(
   await connectToDatabase();
   const parsed = {
     messageId: str(formData, "messageId"),
-    content: str(formData, "content"),
+    subject: str(formData, "subject"),
     sentAt: formData.get("sentAt") || undefined,
     readAt: formData.get("readAt") || undefined,
   };
