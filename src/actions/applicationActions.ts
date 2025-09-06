@@ -9,13 +9,17 @@ import {
   getApplicationById,
   updateApplication,
   addMessageToApplication,
+  getMessages,
+  updateMessage,
+  deleteMessage,
   markMessagesRead,
+  markMessageRead,
   addSecurityQuestion,
   updateSecurityQuestion,
   deleteSecurityQuestion,
   getSecurityQuestions,
   verifySecurityAnswer,
-} from "@/functions/applicationFuntions"; // keep your existing path
+} from "@/functions/applicationFuntions";
 import { ApplicationStatus, BiometricsStatus } from "@/models/Application";
 
 // ================= SCHEMAS =================
@@ -52,6 +56,15 @@ const applicationSchema = z.object({
 
 const messageSchema = z.object({
   content: z.string().trim().min(1, "Message cannot be empty"),
+  sentAt: z.coerce.date().optional(),
+  readAt: z.coerce.date().optional().nullable(),
+});
+
+const updateMessageSchema = z.object({
+  messageId: z.string().trim().min(1, "Message ID is required"),
+  content: z.string().trim().min(1).optional(),
+  sentAt: z.coerce.date().optional(),
+  readAt: z.coerce.date().optional().nullable(),
 });
 
 const securityQuestionSchema = z.object({
@@ -64,7 +77,7 @@ export type ApplicationFormState = {
   data?: any;
 };
 
-// ================= UTILITY: Serialize MongoDB Objects =================
+// ================= UTILITY =================
 
 function serializeMongoDoc(doc: any): any {
   if (!doc) return doc;
@@ -92,8 +105,6 @@ function serializeMongoDoc(doc: any): any {
   return doc;
 }
 
-// ================= HELPER: Parse FormData =================
-
 function str(formData: FormData, key: string) {
   const v = formData.get(key);
   return (v == null ? "" : String(v)).trim();
@@ -104,13 +115,8 @@ function emptyToUndefined<T extends string>(v: string): T | undefined {
 }
 
 function parseApplicationFormData(formData: FormData): Record<string, any> {
-  // Back-compat: accept both names if they exist in older forms
-  const uci =
-    str(formData, "uniqueClientIdentifier") || str(formData, "uci");
-
-  const biomStatusRaw =
-    str(formData, "biometricsStatus") || str(formData, "biometricStatus"); // handle both
-
+  const uci = str(formData, "uniqueClientIdentifier") || str(formData, "uci");
+  const biomStatusRaw = str(formData, "biometricsStatus") || str(formData, "biometricStatus");
   const appStatusRaw = str(formData, "status");
 
   return {
@@ -131,7 +137,6 @@ function parseApplicationFormData(formData: FormData): Record<string, any> {
       status: emptyToUndefined<BiometricsStatus>(biomStatusRaw),
     },
 
-    // ✅ New fields
     reviewOfEligibility: str(formData, "reviewOfEligibility"),
     medical: str(formData, "medical"),
     documents: str(formData, "documents"),
@@ -142,7 +147,7 @@ function parseApplicationFormData(formData: FormData): Record<string, any> {
   };
 }
 
-// ================= APPLICATION CRUD ACTIONS =================
+// ================= APPLICATION CRUD =================
 
 export async function createApplicationAction(
   prevState: ApplicationFormState,
@@ -151,26 +156,13 @@ export async function createApplicationAction(
   await connectToDatabase();
   const parsed = parseApplicationFormData(formData);
   const result = applicationSchema.safeParse(parsed);
-
-  if (!result.success) {
-    return { error: result.error.flatten().fieldErrors };
-  }
+  if (!result.success) return { error: result.error.flatten().fieldErrors };
 
   try {
     const application = await createApplication(result.data);
-    return { data: serializeMongoDoc(application) };
+    return { data: application };
   } catch (error: any) {
-    // Handle duplicate key errors nicely (email, applicationNumber)
-    if (error?.code === 11000 && error?.keyPattern) {
-      const fieldErrors: Record<string, string[]> = {};
-      for (const key of Object.keys(error.keyPattern)) {
-        fieldErrors[key] = [`${key} must be unique`];
-      }
-      return { error: fieldErrors };
-    }
-    return {
-      error: { message: [error?.message || "Failed to create application"] },
-    };
+    return { error: { message: [error?.message || "Failed to create application"] } };
   }
 }
 
@@ -182,25 +174,13 @@ export async function updateApplicationAction(
   await connectToDatabase();
   const parsed = parseApplicationFormData(formData);
   const result = applicationSchema.safeParse(parsed);
-
-  if (!result.success) {
-    return { error: result.error.flatten().fieldErrors };
-  }
+  if (!result.success) return { error: result.error.flatten().fieldErrors };
 
   try {
     const updated = await updateApplication(id, result.data);
-    return { data: serializeMongoDoc(updated) };
+    return { data: updated };
   } catch (error: any) {
-    if (error?.code === 11000 && error?.keyPattern) {
-      const fieldErrors: Record<string, string[]> = {};
-      for (const key of Object.keys(error.keyPattern)) {
-        fieldErrors[key] = [`${key} must be unique`];
-      }
-      return { error: fieldErrors };
-    }
-    return {
-      error: { message: [error?.message || "Failed to update application"] },
-    };
+    return { error: { message: [error?.message || "Failed to update application"] } };
   }
 }
 
@@ -208,7 +188,7 @@ export async function deleteApplicationAction(id: string) {
   await connectToDatabase();
   try {
     const deleted = await deleteApplication(id);
-    return { data: serializeMongoDoc(deleted) };
+    return { data: deleted };
   } catch (error: any) {
     return { error: { message: [error?.message || "Failed to delete application"] } };
   }
@@ -218,7 +198,7 @@ export async function fetchAllApplicationsAction() {
   await connectToDatabase();
   try {
     const applications = await getAllApplications();
-    return { data: serializeMongoDoc(applications) };
+    return { data: applications };
   } catch (error: any) {
     return { error: { message: [error?.message || "Failed to fetch applications"] } };
   }
@@ -229,13 +209,13 @@ export async function fetchApplicationByIdAction(id: string) {
   try {
     const application = await getApplicationById(id);
     if (!application) return { error: { message: ["Application not found"] } };
-    return { data: serializeMongoDoc(application) };
+    return { data: application };
   } catch (error: any) {
     return { error: { message: [error?.message || "Failed to fetch application"] } };
   }
 }
 
-// ================= MESSAGES ACTIONS =================
+// ================= MESSAGES =================
 
 export async function addMessageAction(
   prevState: ApplicationFormState,
@@ -243,15 +223,64 @@ export async function addMessageAction(
   formData: FormData
 ): Promise<ApplicationFormState> {
   await connectToDatabase();
-  const parsed = { content: str(formData, "content") };
+  const parsed = {
+    content: str(formData, "content"),
+    sentAt: formData.get("sentAt") || undefined,
+    readAt: formData.get("readAt") || undefined,
+  };
+
   const result = messageSchema.safeParse(parsed);
   if (!result.success) return { error: result.error.flatten().fieldErrors };
 
   try {
     const updated = await addMessageToApplication(id, result.data);
-    return { data: serializeMongoDoc(updated) };
+    return { data: updated };
   } catch (error: any) {
     return { error: { message: [error?.message || "Failed to add message"] } };
+  }
+}
+
+export async function fetchMessagesAction(id: string) {
+  await connectToDatabase();
+  try {
+    const messages = await getMessages(id);
+    return { data: messages };
+  } catch (error: any) {
+    return { error: { message: [error?.message || "Failed to fetch messages"] } };
+  }
+}
+
+export async function updateMessageAction(
+  prevState: ApplicationFormState,
+  id: string,
+  formData: FormData
+): Promise<ApplicationFormState> {
+  await connectToDatabase();
+  const parsed = {
+    messageId: str(formData, "messageId"),
+    content: str(formData, "content"),
+    sentAt: formData.get("sentAt") || undefined,
+    readAt: formData.get("readAt") || undefined,
+  };
+
+  const result = updateMessageSchema.safeParse(parsed);
+  if (!result.success) return { error: result.error.flatten().fieldErrors };
+
+  try {
+    const updated = await updateMessage(id, result.data.messageId, result.data);
+    return { data: updated };
+  } catch (error: any) {
+    return { error: { message: [error?.message || "Failed to update message"] } };
+  }
+}
+
+export async function deleteMessageAction(id: string, messageId: string) {
+  await connectToDatabase();
+  try {
+    const updated = await deleteMessage(id, messageId);
+    return { data: updated };
+  } catch (error: any) {
+    return { error: { message: [error?.message || "Failed to delete message"] } };
   }
 }
 
@@ -259,13 +288,23 @@ export async function markMessagesReadAction(id: string) {
   await connectToDatabase();
   try {
     const updated = await markMessagesRead(id);
-    return { data: serializeMongoDoc(updated) };
+    return { data: updated };
   } catch (error: any) {
     return { error: { message: [error?.message || "Failed to mark messages read"] } };
   }
 }
 
-// ================= SECURITY QUESTIONS ACTIONS =================
+export async function markMessageReadAction(id: string, messageId: string) {
+  await connectToDatabase();
+  try {
+    const updated = await markMessageRead(id, messageId);
+    return { data: updated };
+  } catch (error: any) {
+    return { error: { message: [error?.message || "Failed to mark message read"] } };
+  }
+}
+
+// ================= SECURITY QUESTIONS =================
 
 export async function addSecurityQuestionAction(
   prevState: ApplicationFormState,
@@ -277,12 +316,13 @@ export async function addSecurityQuestionAction(
     question: str(formData, "question"),
     answer: str(formData, "answer"),
   };
+
   const result = securityQuestionSchema.safeParse(parsed);
   if (!result.success) return { error: result.error.flatten().fieldErrors };
 
   try {
     const updated = await addSecurityQuestion(id, result.data.question, result.data.answer);
-    return { data: serializeMongoDoc(updated) };
+    return { data: updated };
   } catch (error: any) {
     return { error: { message: [error?.message || "Failed to add security question"] } };
   }
@@ -308,7 +348,7 @@ export async function updateSecurityQuestionAction(
 
   try {
     const updated = await updateSecurityQuestion(id, result.data.questionId, result.data.newAnswer);
-    return { data: serializeMongoDoc(updated) };
+    return { data: updated };
   } catch (error: any) {
     return { error: { message: [error?.message || "Failed to update security question"] } };
   }
@@ -318,7 +358,7 @@ export async function deleteSecurityQuestionAction(id: string, questionId: strin
   await connectToDatabase();
   try {
     const updated = await deleteSecurityQuestion(id, questionId);
-    return { data: serializeMongoDoc(updated) };
+    return { data: updated };
   } catch (error: any) {
     return { error: { message: [error?.message || "Failed to delete security question"] } };
   }
@@ -328,11 +368,7 @@ export async function fetchSecurityQuestionsAction(id: string) {
   await connectToDatabase();
   try {
     const questions = await getSecurityQuestions(id);
-    const serializedQuestions = questions.map((q: any) => ({
-      _id: q._id.toString(),
-      question: q.question,
-    }));
-    return { data: serializedQuestions };
+    return { data: questions.map((q: any) => ({ _id: q._id.toString(), question: q.question })) };
   } catch (error: any) {
     return { error: { message: [error?.message || "Failed to fetch security questions"] } };
   }

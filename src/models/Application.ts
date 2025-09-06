@@ -30,7 +30,7 @@
     messages: {
       content: string;
       sentAt: Date;
-      isRead: boolean;
+      readAt?: Date | null;
     }[];
 
     // ✅ Security questions
@@ -113,7 +113,7 @@
         {
           content: { type: String, required: true },
           sentAt: { type: Date, default: Date.now },
-          isRead: { type: Boolean, default: false },
+          readAt: { type: Date, default: null }, 
         },
       ],
 

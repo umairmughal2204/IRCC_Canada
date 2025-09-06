@@ -31,7 +31,7 @@ export default function Home({
   }, [id]);
 
   const filtered = messages.filter((msg) =>
-    msg.subject.toLowerCase().includes(search.toLowerCase())
+    msg.subject?.toLowerCase().includes(search.toLowerCase())
   );
   const lastModified = applicationData?.lastModified
     ? new Date(applicationData.lastModified).toLocaleDateString("en-US", {

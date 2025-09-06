@@ -1,7 +1,7 @@
 import { Application, ApplicationStatus, BiometricsStatus } from "@/models/Application";
 
 /**
- * Sanitize and format incoming application data.
+ * ================= SANITIZER =================
  */
 const sanitizeApplicationData = (data: {
   userName: string;
@@ -56,7 +56,7 @@ const sanitizeApplicationData = (data: {
 });
 
 /**
- * Convert Application document to plain object.
+ * ================= SERIALIZER =================
  */
 const serializeApplication = (application: any) => ({
   _id: application._id.toString(),
@@ -83,21 +83,26 @@ const serializeApplication = (application: any) => ({
   backgroundCheck: application.backgroundCheck,
   finalDecision: application.finalDecision,
 
+  // ✅ Updated messages
   messages: application.messages?.map((msg: any) => ({
+    _id: msg._id?.toString(),
     content: msg.content,
     sentAt: msg.sentAt?.toISOString?.(),
-    isRead: msg.isRead,
+    readAt: msg.readAt ? msg.readAt.toISOString() : null,
   })),
+
+  // ✅ Security questions (answers hidden)
   securityQuestions: application.securityQuestions?.map((q: any) => ({
     _id: q._id?.toString(),
     question: q.question,
   })),
+
   createdAt: application.createdAt?.toISOString?.(),
   updatedAt: application.updatedAt?.toISOString?.(),
 });
 
 /**
- * Create a new application
+ * ================= APPLICATION CRUD =================
  */
 export const createApplication = async (data: any) => {
   const appData = sanitizeApplicationData(data);
@@ -105,25 +110,16 @@ export const createApplication = async (data: any) => {
   return serializeApplication(application);
 };
 
-/**
- * Get all applications
- */
 export const getAllApplications = async () => {
   const applications = await Application.find().sort({ createdAt: -1 }).lean();
   return applications.map(serializeApplication);
 };
 
-/**
- * Get application by ID
- */
 export const getApplicationById = async (id: string) => {
   const application = await Application.findById(id).lean();
   return application ? serializeApplication(application) : null;
 };
 
-/**
- * Update application by ID
- */
 export const updateApplication = async (id: string, data: any) => {
   const updatedData = sanitizeApplicationData(data);
   const application = await Application.findByIdAndUpdate(
@@ -134,47 +130,130 @@ export const updateApplication = async (id: string, data: any) => {
   return application ? serializeApplication(application) : null;
 };
 
-/**
- * Delete application by ID
- */
 export const deleteApplication = async (id: string) => {
   const application = await Application.findByIdAndDelete(id).lean();
   return application ? serializeApplication(application) : null;
 };
 
 /**
- * Add a message to an application
+ * ================= MESSAGES =================
+ */
+
+/**
+ * Add a new message
  */
 export const addMessageToApplication = async (
   id: string,
-  message: { content: string }
+  message: { content: string; sentAt?: Date; readAt?: Date | null }
 ) => {
   const application = await Application.findByIdAndUpdate(
     id,
-    { $push: { messages: { content: message.content, sentAt: new Date() } } },
-    { new: true }
+    {
+      $push: {
+        messages: {
+          content: message.content,
+          sentAt: message.sentAt ?? new Date(),
+          readAt: message.readAt ?? null,
+        },
+      },
+    },
+    { new: true, runValidators: true }
   ).lean();
+
   return application ? serializeApplication(application) : null;
 };
 
 /**
- * Mark all messages as read
+ * Get all messages for an application
+ */
+export const getMessages = async (id: string) => {
+  const application = await Application.findById(id)
+    .select("messages")
+    .lean();
+
+  return application
+    ? application.messages?.map((msg: any) => ({
+        _id: msg._id?.toString(),
+        content: msg.content,
+        sentAt: msg.sentAt?.toISOString?.(),
+        readAt: msg.readAt ? msg.readAt.toISOString?.() : null,
+      }))
+    : [];
+};
+
+/**
+ * Update a message (content, sentAt, readAt)
+ */
+export const updateMessage = async (
+  id: string,
+  messageId: string,
+  updateData: { content?: string; sentAt?: Date; readAt?: Date | null }
+) => {
+  const updateFields: any = {};
+
+  if (updateData.content !== undefined) updateFields["messages.$.content"] = updateData.content;
+  if (updateData.sentAt !== undefined) updateFields["messages.$.sentAt"] = updateData.sentAt;
+  if (updateData.readAt !== undefined) updateFields["messages.$.readAt"] = updateData.readAt;
+
+  const application = await Application.findOneAndUpdate(
+    { _id: id, "messages._id": messageId },
+    { $set: updateFields },
+    { new: true, runValidators: true }
+  ).lean();
+
+  return application ? serializeApplication(application) : null;
+};
+
+/**
+ * Mark all messages as read (force set readAt = now)
  */
 export const markMessagesRead = async (id: string) => {
   const application = await Application.findByIdAndUpdate(
     id,
-    { $set: { "messages.$[].isRead": true } },
+    {
+      $set: {
+        "messages.$[].readAt": new Date(),
+      },
+    },
     { new: true }
   ).lean();
+
   return application ? serializeApplication(application) : null;
 };
 
 /**
- * ================= SECURITY QUESTIONS =================
+ * Mark a single message as read (force set readAt = now)
  */
+export const markMessageRead = async (id: string, messageId: string) => {
+  const application = await Application.findOneAndUpdate(
+    { _id: id, "messages._id": messageId },
+    {
+      $set: {
+        "messages.$.readAt": new Date(),
+      },
+    },
+    { new: true }
+  ).lean();
+
+  return application ? serializeApplication(application) : null;
+};
 
 /**
- * Add a new security question
+ * Delete a message
+ */
+export const deleteMessage = async (id: string, messageId: string) => {
+  const application = await Application.findByIdAndUpdate(
+    id,
+    { $pull: { messages: { _id: messageId } } },
+    { new: true }
+  ).lean();
+
+  return application ? serializeApplication(application) : null;
+};
+
+
+/**
+ * ================= SECURITY QUESTIONS CRUD =================
  */
 export const addSecurityQuestion = async (
   id: string,
@@ -189,9 +268,6 @@ export const addSecurityQuestion = async (
   return application ? serializeApplication(application) : null;
 };
 
-/**
- * Update a security question's answer
- */
 export const updateSecurityQuestion = async (
   id: string,
   questionId: string,
@@ -205,9 +281,6 @@ export const updateSecurityQuestion = async (
   return application ? serializeApplication(application) : null;
 };
 
-/**
- * Delete a security question
- */
 export const deleteSecurityQuestion = async (
   id: string,
   questionId: string
@@ -220,9 +293,6 @@ export const deleteSecurityQuestion = async (
   return application ? serializeApplication(application) : null;
 };
 
-/**
- * Get security questions (without answers)
- */
 export const getSecurityQuestions = async (id: string) => {
   const application = await Application.findById(id)
     .select("securityQuestions.question securityQuestions._id")
@@ -230,9 +300,6 @@ export const getSecurityQuestions = async (id: string) => {
   return application ? application.securityQuestions : [];
 };
 
-/**
- * Verify a security question answer
- */
 export const verifySecurityAnswer = async (
   id: string,
   questionId: string,

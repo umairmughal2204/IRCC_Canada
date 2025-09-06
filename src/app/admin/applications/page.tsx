@@ -45,7 +45,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Eye, Pencil, Trash2, Loader2, HelpCircle } from "lucide-react";
+import { Eye, Pencil, Trash2, Loader2, HelpCircle, MessageSquare } from "lucide-react";
 
 interface IApplication {
   _id: string;
@@ -77,6 +77,7 @@ function ApplicationsTable({
   onEdit,
   onDelete,
   onQuestions,
+  onMessages,
   loading,
 }: {
   applications: IApplication[];
@@ -84,6 +85,7 @@ function ApplicationsTable({
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   onQuestions: (id: string) => void; // new handler
+  onMessages: (id: string) => void; 
   loading: boolean;
 }) {
   if (loading) {
@@ -159,6 +161,15 @@ function ApplicationsTable({
                       title="Security Questions"
                     >
                       <HelpCircle className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => onMessages(app._id)}
+                      title="Messages"
+                    >
+                      <MessageSquare className="h-4 w-4" />
                     </Button>
                   </div>
                 </TableCell>
@@ -277,6 +288,7 @@ export default function ApplicationsPage() {
             onEdit={(id) => router.push(`/admin/applications/edit/${id}`)}
             onDelete={(id) => setConfirmDeleteId(id)}
             onQuestions={(id) => router.push(`/admin/applications/${id}/questions`)}
+            onMessages={(id) => router.push(`/admin/applications/${id}/messages`)}
             loading={loading}
           />
         </Suspense>

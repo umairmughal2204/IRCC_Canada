@@ -38,7 +38,7 @@ export default function AccountPage({
   }, [id]);
 
   const filteredMessages = messages.filter((msg) =>
-    msg.subject.toLowerCase().includes(search.toLowerCase())
+    msg.subject?.toLowerCase().includes(search.toLowerCase())
   );
 
   // Dynamic last modified date
