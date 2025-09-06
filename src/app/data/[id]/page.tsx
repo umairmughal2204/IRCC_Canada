@@ -17,6 +17,8 @@ export default function AccountPage({
   const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(5);
 
   // Fetch application by ID
   useEffect(() => {
@@ -41,18 +43,27 @@ export default function AccountPage({
     msg.subject?.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Pagination calculations
+  const indexOfLastMessage = currentPage * entriesPerPage;
+  const indexOfFirstMessage = indexOfLastMessage - entriesPerPage;
+  const currentMessages = filteredMessages.slice(
+    indexOfFirstMessage,
+    indexOfLastMessage
+  );
+  const totalPages = Math.ceil(filteredMessages.length / entriesPerPage);
+
   // Dynamic last modified date
   const lastModified = application?.lastModified
     ? new Date(application.lastModified).toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    })
     : new Date().toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      });
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
   const handleLogout = async () => {
     try {
       await logoutApplicationAction(); // Call server action
@@ -414,23 +425,150 @@ export default function AccountPage({
           </div>
         </div>
 
-        <h2 className="text-4xl font-bold mb-2">Account messages</h2>
-        <p className="text-lg text-gray-700 mb-4">
-          Read messages related to your account. Messages about a submitted
-          application are on your application status page.
-        </p>
-        <p className="text-base text-gray-600">You have no messages.</p>
+        {/* ===================== Messages Section ===================== */}
+        <div className="mt-10 px-6">
+          <h2 className="text-4xl font-semibold mb-4">
+            Messages about your application
+          </h2>
+          <div className="flex items-center gap-2 text-gray-800 text-lg max-w-full whitespace-nowrap overflow-hidden">
+            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-cyan-600 flex items-center justify-center">
+              <span className="text-white font-bold text-sm">i</span>
+            </div>
+            <p className="truncate">
+              Links and document titles are shown in the language you chose for
+              your portal account when they were generated.
+            </p>
+          </div>
+          <p className="mt-3 text-lg text-gray-700">
+            ({filteredMessages.length} New message
+            {filteredMessages.length !== 1 ? "s" : ""})
+          </p>
 
-        {/* Report Problem */}
-        <div className="mt-4">
-          <button
-            className="border border-gray-300 px-4 py-2 rounded text-base 
+          {/* Filters */}
+          <div className="flex items-center gap-6 mb-2 md:mb-0 mt-4">
+            <div className="flex items-center gap-2">
+              <label htmlFor="search" className="font-medium">
+                Search:
+              </label>
+              <input
+                id="search"
+                type="text"
+                className="border border-gray-300 rounded px-2 py-1 text-base"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setCurrentPage(1); // Reset page on search
+                }}
+              />
+            </div>
+            <div className="text-base text-gray-600">
+              Showing {indexOfFirstMessage + 1} to{" "}
+              {Math.min(indexOfLastMessage, filteredMessages.length)} of{" "}
+              {filteredMessages.length} entries
+            </div>
+            <div className="flex items-center gap-2">
+              <span>Show</span>
+              <select
+                className="border border-gray-300 rounded px-2 py-1 text-base"
+                value={entriesPerPage}
+                onChange={(e) => {
+                  setEntriesPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+              >
+                <option>5</option>
+                <option>10</option>
+                <option>25</option>
+              </select>
+              <span>entries</span>
+            </div>
+          </div>
+
+          {/* Table */}
+          <table className="min-w-full border border-gray-300 text-left my-4">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="px-4 py-2 font-semibold border border-gray-300 cursor-pointer">
+                  Subject <span>⇅</span>
+                </th>
+                <th className="px-4 py-2 font-semibold border border-gray-300 cursor-pointer">
+                  Date sent <span>⇅</span>
+                </th>
+                <th className="px-4 py-2 font-semibold border border-gray-300 cursor-pointer">
+                  Date read <span>⇅</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentMessages.length > 0 ? (
+                currentMessages.map((msg, index) => (
+                  <tr
+                    key={index}
+                    className="border border-gray-300 hover:bg-gray-50"
+                  >
+                    <td className="px-4 py-2 border border-gray-300 text-blue-700 underline cursor-pointer">
+                      {msg.subject || "N/A"}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {msg.sentAt
+                        ? new Date(msg.sentAt).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })
+                        : "N/A"}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {msg.readAt
+                        ? new Date(msg.readAt).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })
+                        : "New Message"}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={3}
+                    className="text-center px-4 py-2 border border-gray-300"
+                  >
+                    No messages found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+
+          {/* Pagination */}
+          <div className="flex justify-center gap-2 mb-10">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+              <button
+                key={num}
+                className={`px-5 py-2 text-xl rounded-lg transition-colors duration-200 ${num === currentPage
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                onClick={() => setCurrentPage(num)}
+              >
+                {num}
+              </button>
+            ))}
+          </div>
+
+          {/* Report Problem */}
+          <div className="mt-4">
+            <button
+              className="border border-gray-300 px-4 py-2 rounded text-base 
                      bg-gray-100 text-blue-600 
                      hover:bg-gray-300 hover:text-blue-700 
                      active:bg-gray-400"
-          >
-            Report a problem or mistake on this page
-          </button>
+            >
+              Report a problem or mistake on this page
+            </button>
+          </div>
         </div>
       </main>
 
