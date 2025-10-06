@@ -79,65 +79,84 @@ export default function AuthSuccessPage({
         </div>
 
         {/* Success Alert */}
-       <div className="relative flex items-start gap-3 p-4 mb-6">
-      {/* Vertical line with check in center */}
-      <div className="flex flex-col items-center">
-        <div className="w-0.5 flex-1 bg-green-600"></div>
-        <FaCheckCircle className="text-green-600 text-2xl my-1" />
-        <div className="w-0.5 flex-1 bg-green-600"></div>
-      </div>
+        <div className="relative flex items-start gap-3 p-4 mb-6">
+          {/* Vertical line with check in center */}
+          <div className="flex flex-col items-center">
+            <div className="w-0.5 flex-1 bg-green-600"></div>
+            <FaCheckCircle className="text-green-600 text-2xl my-1" />
+            <div className="w-0.5 flex-1 bg-green-600"></div>
+          </div>
 
-      {/* Text content */}
-      <div>
-        <p className=" text-black text-lg font-medium">
-          You have successfully completed two-factor authentication.
-        </p>
-      </div>
-    </div>
+          {/* Text content */}
+          <div>
+            <p className=" text-black text-lg font-medium">
+              You have successfully completed two-factor authentication.
+            </p>
+          </div>
+        </div>
 
         <p className="mb-4 text-gray-800">
           Here are the details of your recent two-factor authentication activity:
         </p>
         <ul className="list-disc ml-6 space-y-2 text-gray-700">
           <li>
-  Your last two-factor authentication was on{" "}
-  <b>
-    {applicationData?.updatedAt
-      ? new Date(applicationData.updatedAt).toLocaleString("en-US", {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          hour: "numeric",
-          minute: "numeric",
-          second: "numeric",
-          hour12: true,
-          timeZone: "America/New_York", 
-          timeZoneName: "short", // ✅ shows GMT+5
-        })
-      : "Loading..."}
-  </b>
-</li>
+            Your last two-factor authentication was on{" "}
+            <b>
+              {applicationData?.updatedAt
+                ? (() => {
+                  const date = new Date(applicationData.updatedAt);
+                  const formatted = date.toLocaleString("en-US", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: false,
+                    timeZone: "America/New_York",
+                    timeZoneName: "short",
+                  });
 
-<li>
-  The last failed authentication attempt was on{" "}
-  <b>
-    {applicationData?.updatedAt
-      ? new Date(applicationData.updatedAt).toLocaleString("en-US", {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          hour: "numeric",
-          minute: "numeric",
-          second: "numeric",
-          hour12: true,
-          timeZone: "America/New_York", 
-          timeZoneName: "short", // ✅ shows GMT+5
-        })
-      : "Loading..."}
-  </b>
-</li>
+                  // Format like: Monday, October 6, 2025 at 11:30:41 EDT
+                  return formatted
+                    .replace(/^(\w+)/, "$1,") // comma after weekday
+                    .replace(", ", " ")       // remove extra comma after weekday if any
+                    .replace(/(\d{4}),/, "$1 at"); // insert 'at' after year
+                })()
+                : "Loading..."}
+            </b>
+          </li>
+
+          <li>
+            The last failed two-factor authentication attempt was on{" "}
+            <b>
+              {applicationData?.updatedAt
+                ? (() => {
+                  const date = new Date(applicationData.updatedAt);
+                  const formatted = date.toLocaleString("en-US", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: false,
+                    timeZone: "America/New_York",
+                    timeZoneName: "short",
+                  });
+
+                  // Format like: Monday, October 6, 2025 at 11:30:41 EDT
+                  return formatted
+                    .replace(/^(\w+)/, "$1,")
+                    .replace(", ", " ")
+                    .replace(/(\d{4}),/, "$1 at");
+                })()
+                : "Loading..."}
+            </b>
+          </li>
+
 
           <li>
             You have{" "}
@@ -164,7 +183,7 @@ export default function AuthSuccessPage({
           </p>
           <a
             href="/twofactor/setup"
-             className="border border-gray-300 px-4 py-2 rounded text-base 
+            className="border border-gray-300 px-4 py-2 rounded text-base 
                      bg-gray-100 text-blue-600 
                      hover:bg-gray-300 hover:text-blue-700 
                      active:bg-gray-400"
@@ -189,11 +208,9 @@ export default function AuthSuccessPage({
         {/* Footer date */}
         <div className="mt-12 text-sm text-gray-600">
           Date modified:{" "}
-          <strong>
-            {applicationData?.updatedAt
-              ? new Date(applicationData.updatedAt).toLocaleDateString()
-              : "Loading..."}
-          </strong>
+          {applicationData?.updatedAt
+            ? new Date(applicationData.updatedAt).toISOString().split("T")[0]
+            : "Loading..."}
         </div>
       </main>
 

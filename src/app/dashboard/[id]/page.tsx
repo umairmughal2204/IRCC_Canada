@@ -119,23 +119,27 @@ export default function DashboardPage({
             <div className="px-6 py-8 text-[17px] text-gray-800 space-y-5">
               <p>
                 You last signed in with your GCKey on{" "}
-                <strong>
-                  {applicationData?.updatedAt
-                    ? new Date(applicationData.updatedAt).toLocaleString("en-US", {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                      hour12: false,
-                      timeZoneName: "short",
-                    })
-                    : "Loading..."}
-                </strong>
+                {applicationData?.updatedAt
+                  ? (() => {
+                    const date = new Date(applicationData.updatedAt);
+                    return date
+                      .toLocaleString("en-US", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: false,
+                        timeZone: "America/New_York", // Eastern Time
+                      })
+                      .replace(/^(\w+)/, "$1,") // add comma after weekday
+                      .replace(",", "") // cleanup unnecessary comma
+                      .replace(/(\d{4})/, "$1 at"); // insert 'at' after year
+                  })() + " ET."
+                  : "Loading..."}
               </p>
-
               <p>
                 From this page you can{" "}
                 <a href="#" className="text-blue-800 underline hover:text-blue-900">
@@ -207,14 +211,13 @@ export default function DashboardPage({
 
       {/* Footer */}
       <footer className="mt-16">
-        <div className="bg-white px-8 py-4 text-sm text-gray-800 w-full">
+        <div className="bg-white px-8 py-4 text-md text-gray-900 w-full">
           Date modified:{" "}
-          <strong>
-            {applicationData?.updatedAt
-              ? new Date(applicationData.updatedAt).toLocaleDateString()
-              : "Loading..."}
-          </strong>
+          {applicationData?.updatedAt
+            ? new Date(applicationData.updatedAt).toISOString().split("T")[0]
+            : "Loading..."}
         </div>
+
         <div className="bg-[#e9ecef] w-full">
           <div className="w-full px-8 py-10 grid grid-cols-1 md:grid-cols-3 gap-12 text-sm text-gray-900">
             <div>
@@ -267,10 +270,10 @@ export default function DashboardPage({
         </div>
         <div className="bg-white py-6 px-8 flex justify-end w-full">
           <img
-                        src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_43/wet-boew/assets/wmms-blk.svg"
-                        alt="Canada logo"
-                        className="h-8"
-                    />
+            src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_43/wet-boew/assets/wmms-blk.svg"
+            alt="Canada logo"
+            className="h-8"
+          />
         </div>
       </footer>
     </div>

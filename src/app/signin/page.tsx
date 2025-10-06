@@ -167,6 +167,7 @@ export default function SignInPage() {
                         Exit
                     </button>
                 </div>
+                <p className="text-md text-gray-900">Date modified: 2024-07-20</p>
             </main>
 
             {/* Footer */}

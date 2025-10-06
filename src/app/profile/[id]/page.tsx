@@ -54,18 +54,6 @@ export default function Home({
     }
   };
 
-  const lastModified = applicationData?.lastModified
-    ? new Date(applicationData.lastModified).toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
-    : new Date().toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      });
-
   return (
     <div className="bg-white text-black font-sans min-h-screen">
       {/* Header */}
@@ -482,7 +470,9 @@ export default function Home({
       {/* Footer */}
       <footer className="mt-12">
         <div className="px-4 sm:px-8 py-3 text-base text-gray-600">
-          Date modified: <span className="font-medium">{lastModified}</span>
+          Date modified: {applicationData?.updatedAt
+            ? new Date(applicationData.updatedAt).toISOString().split("T")[0]
+            : "Loading..."}
         </div>
 
         <div className="bg-[#26374a] text-white py-8">

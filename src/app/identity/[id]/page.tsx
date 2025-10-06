@@ -87,18 +87,6 @@ export default function IdentityVerificationPage({
     }
   };
 
-  const dateModified = applicationData?.lastModified
-    ? new Date(applicationData.lastModified).toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
-    : new Date().toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      });
-
   return (
     <div className="min-h-screen flex flex-col bg-white text-gray-800">
       {/* Header */}
@@ -259,7 +247,9 @@ export default function IdentityVerificationPage({
       {/* Footer */}
       <footer className="mt-16">
         <div className="bg-white px-8 py-4 text-sm text-gray-800 w-full">
-          Date modified: <strong>{dateModified}</strong>
+          Date modified: {applicationData?.updatedAt
+            ? new Date(applicationData.updatedAt).toISOString().split("T")[0]
+            : "Loading..."}
         </div>
 
         <div className="bg-[#e9ecef] w-full">

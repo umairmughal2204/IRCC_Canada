@@ -160,7 +160,7 @@ export default function Home() {
           </div>
         </div>
 
-        <p className="text-sm text-gray-500">Date modified: 2025-07-14</p>
+        <p className="text-md text-gray-900">Date modified: 2025-07-14</p>
       </section>
 
       {/* ===== Footer ===== */}

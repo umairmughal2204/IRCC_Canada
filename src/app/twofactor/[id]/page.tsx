@@ -238,8 +238,8 @@ export default function TwoFactorPage({
           Date modified:{" "}
           <strong>
             {applicationData?.updatedAt
-              ? new Date(applicationData.updatedAt).toLocaleDateString()
-              : "Loading..."}
+            ? new Date(applicationData.updatedAt).toISOString().split("T")[0]
+            : "Loading..."}
           </strong>
         </div>
       </div>

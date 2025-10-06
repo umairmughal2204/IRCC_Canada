@@ -52,18 +52,6 @@ export default function AccountPage({
   );
   const totalPages = Math.ceil(filteredMessages.length / entriesPerPage);
 
-  // Dynamic last modified date
-  const lastModified = application?.lastModified
-    ? new Date(application.lastModified).toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    })
-    : new Date().toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
   const handleLogout = async () => {
     try {
       await logoutApplicationAction(); // Call server action
@@ -575,7 +563,9 @@ export default function AccountPage({
       {/* Footer */}
       <footer className="mt-12">
         <div className="px-4 sm:px-8 py-3 text-base text-gray-600">
-          Date modified: <span className="font-medium">{lastModified}</span>
+          Date modified: {application?.updatedAt
+            ? new Date(application.updatedAt).toISOString().split("T")[0]
+            : "Loading..."}
         </div>
 
         <div className="bg-[#26374a] text-white py-8">
