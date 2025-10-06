@@ -138,12 +138,12 @@ export default function Home({
               Biometrics -{" "}
               {applicationData?.biometrics?.enrolmentDate
                 ? new Date(
-                    applicationData.biometrics.enrolmentDate
-                  ).toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  })
+                  applicationData.biometrics.enrolmentDate
+                ).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })
                 : "N/A"}{" "}
               : {applicationData?.biometrics?.status || "Pending"}.
             </p>
@@ -172,12 +172,13 @@ export default function Home({
               <strong>Date Received:</strong>{" "}
               {applicationData?.dateOfSubmission
                 ? new Date(
-                    applicationData.dateOfSubmission
-                  ).toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  })
+                  applicationData.dateOfSubmission
+                ).toLocaleDateString("en-US", {
+                  timeZone: "UTC",
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })
                 : "Loading..."}
             </p>
             <p>
@@ -192,24 +193,26 @@ export default function Home({
                 <strong>Date of Biometrics Enrolment:</strong>{" "}
                 {applicationData?.biometrics?.enrolmentDate
                   ? new Date(
-                      applicationData.biometrics.enrolmentDate
-                    ).toLocaleDateString("en-US", {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
-                    })
+                    applicationData.biometrics.enrolmentDate
+                  ).toLocaleDateString("en-US", {
+                    timeZone: "UTC",
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })
                   : "Loading..."}
               </li>
               <li>
                 <strong>Expiry Date:</strong>{" "}
                 {applicationData?.biometrics?.expiryDate
                   ? new Date(
-                      applicationData.biometrics.expiryDate
-                    ).toLocaleDateString("en-US", {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
-                    })
+                    applicationData.biometrics.expiryDate
+                  ).toLocaleDateString("en-US", {
+                    timeZone: "UTC",
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })
                   : "Loading..."}
               </li>
             </ul>
@@ -407,19 +410,21 @@ export default function Home({
                   <td className="px-4 py-2 border border-gray-300">
                     {msg.sentAt
                       ? new Date(msg.sentAt).toLocaleDateString("en-US", {
-                          month: "long",
-                          day: "numeric",
-                          year: "numeric",
-                        })
+                        timeZone: "UTC",
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      })
                       : "N/A"}
                   </td>
                   <td className="px-4 py-2 border border-gray-300">
                     {msg.readAt
                       ? new Date(msg.readAt).toLocaleDateString("en-US", {
-                          month: "long",
-                          day: "numeric",
-                          year: "numeric",
-                        })
+                        timeZone: "UTC",
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      })
                       : "New Message"}
                   </td>
                 </tr>
@@ -442,11 +447,10 @@ export default function Home({
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
             <button
               key={num}
-              className={`px-5 py-2 text-xl rounded-lg transition-colors duration-200 ${
-                num === currentPage
+              className={`px-5 py-2 text-xl rounded-lg transition-colors duration-200 ${num === currentPage
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
+                }`}
               onClick={() => setCurrentPage(num)}
             >
               {num}

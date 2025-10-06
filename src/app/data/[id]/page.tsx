@@ -210,6 +210,7 @@ export default function AccountPage({
                       {new Date(
                         application.dateOfSubmission
                       ).toLocaleDateString("en-US", {
+                        timeZone: "UTC",
                         month: "long",
                         day: "numeric",
                         year: "numeric",
@@ -500,6 +501,7 @@ export default function AccountPage({
                     <td className="px-4 py-2 border border-gray-300">
                       {msg.sentAt
                         ? new Date(msg.sentAt).toLocaleDateString("en-US", {
+                          timeZone: "UTC",
                           month: "long",
                           day: "numeric",
                           year: "numeric",
@@ -509,6 +511,7 @@ export default function AccountPage({
                     <td className="px-4 py-2 border border-gray-300">
                       {msg.readAt
                         ? new Date(msg.readAt).toLocaleDateString("en-US", {
+                          timeZone: "UTC",
                           month: "long",
                           day: "numeric",
                           year: "numeric",
