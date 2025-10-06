@@ -39,19 +39,6 @@ export default function TermsPage({
     }
   };
 
-  // Dynamic footer date
-  const dateModified = applicationData?.lastModified
-    ? new Date(applicationData.lastModified).toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
-    : new Date().toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      });
-
   return (
     <main className="min-h-screen bg-white text-gray-900">
       {/* Header */}
@@ -226,7 +213,9 @@ export default function TermsPage({
       <footer className="mt-16">
         {/* Dynamic Date Modified */}
         <div className="bg-white px-8 py-4 text-sm text-gray-800 w-full">
-          Date modified: <strong>{dateModified}</strong>
+          Date modified: {applicationData?.updatedAt
+            ? new Date(applicationData.updatedAt).toISOString().split("T")[0]
+            : "Loading..."}
         </div>
 
         {/* Footer Columns */}
