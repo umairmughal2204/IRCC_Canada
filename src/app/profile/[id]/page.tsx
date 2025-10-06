@@ -140,6 +140,7 @@ export default function Home({
                 ? new Date(
                   applicationData.biometrics.enrolmentDate
                 ).toLocaleDateString("en-US", {
+                  timeZone: "UTC",
                   month: "long",
                   day: "numeric",
                   year: "numeric",
