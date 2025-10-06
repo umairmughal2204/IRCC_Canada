@@ -98,7 +98,7 @@ export const sendOtp = async (applicationId: string) => {
   console.log(app)
 
   // Generate OTP and save it temporarily in DB
-  const otp = generateOtp(6); // OTP length is 6
+  const otp = generateOtp(8); // OTP length is 6
   (app as any).otpCode = otp;
   (app as any).otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 min expiry
   await app.save();
