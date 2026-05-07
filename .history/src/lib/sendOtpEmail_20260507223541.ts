@@ -9,9 +9,9 @@ export async function sendOtpEmail(to: string, otp: string) {
       pass: "hcpl fovi uemk kpjz",           // your Google App Password
     },
   });
-
+  
   const mailOptions = {
-    from: `"Government of Canada" <GC@auth.cananda.ca>`,
+    from: `"Government of Canada" GC@auth.cananda.ca`,
     to,
     subject: "Verify your login - Government of Canada",
     html: `

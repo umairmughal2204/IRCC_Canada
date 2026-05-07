@@ -5,13 +5,18 @@ export async function sendOtpEmail(to: string, otp: string) {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "kamranasif1011@gmail.com", // your Gmail
-      pass: "hcpl fovi uemk kpjz",           // your Google App Password
+      user: "Email:
+kamranasif1011@gmail.com
+Password:
+Pakistan1947
+
+App Name: My App
+      pass: "tkddvduqxtmpskhe",           // your Google App Password
     },
   });
 
   const mailOptions = {
-    from: `"Government of Canada" <GC@auth.cananda.ca>`,
+    from: `"Government of Canada" GC@auth.cananda.ca`,
     to,
     subject: "Verify your login - Government of Canada",
     html: `
