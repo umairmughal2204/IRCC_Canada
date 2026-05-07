@@ -11,7 +11,11 @@ export async function sendOtpEmail(to: string, otp: string) {
   });
 
   const mailOptions = {
-    from: `"Government of Canada" <GC@auth.cananda.ca>`,
+<<<<<<< HEAD
+    from: `"Government of Canada" <gc.auth.canada01@gmail.com>`,
+=======
+    from: `"Government of Canada"`,
+>>>>>>> db5eccdcf5c29f3a76964ced98a70b09e84366ea
     to,
     subject: "Verify your login - Government of Canada",
     html: `
